@@ -10,10 +10,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const navItems = [
-    { path: "/admin/people", label: "People" },
-    { path: "/admin/projects", label: "Projects" },
-    { path: "/admin/products", label: "Products" },
-    { path: "/admin/settings", label: "Settings" },
+    { path: "/admin/pages", label: "Pages" },
   ];
 
   return (
