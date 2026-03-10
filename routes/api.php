@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\PeopleController;
 use App\Http\Controllers\Api\ProductsController;
 use App\Http\Controllers\Api\ProjectsController;
 
+use App\Http\Controllers\Api\PagesController;
 use App\Http\Controllers\Api\SettingsController;
 
 // People routes
@@ -31,3 +32,10 @@ Route::delete('/projects/{project}', [ProjectsController::class, 'destroy']);
 // Settings routes
 Route::get('/settings', [SettingsController::class, 'index']);
 Route::put('/settings', [SettingsController::class, 'update']);
+
+// Pages routes
+Route::get('/pages', [PagesController::class, 'index']);
+Route::get('/pages/{slug}', [PagesController::class, 'show']);
+Route::post('/pages', [PagesController::class, 'store']);
+Route::put('/pages/{id}', [PagesController::class, 'update']);
+Route::delete('/pages/{id}', [PagesController::class, 'destroy']);
