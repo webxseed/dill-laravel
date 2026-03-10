@@ -1,7 +1,9 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { FadeIn, SectionHeader } from "@/components/FadeIn";
+import { api, Person } from "@/lib/api";
 import heroBg from "@/assets/hero-bg.jpg";
 import microstructureImg from "@/assets/microstructure-sem.jpg";
 import labImg from "@/assets/lab-environment.jpg";
@@ -12,12 +14,6 @@ import newsMembersImg from "@/assets/news/new-members.jpg";
 import newsIsfImg from "@/assets/news/isf-grant.jpg";
 import newsMaxPlanckImg from "@/assets/news/max-planck.jpg";
 
-import hannaImg from "@/assets/team/hanna.avif";
-import amramImg from "@/assets/team/amram.avif";
-import gautamImg from "@/assets/team/gautam.avif";
-import sajaImg from "@/assets/team/saja.avif";
-import omerImg from "@/assets/team/omer.avif";
-
 const newsItems = [
   { date: "February 2024", title: "Lab Construction Completed", text: "Lab construction completed! Instruments warming and running. Looking forward to cutting-edge research.", image: newsLabImg },
   { date: "September 2023", title: "NOGA Funding Accepted", text: "A proposal project accepted for fund by NOGA company — studying highly-strong and highly conductive Aluminum alloys.", image: newsAluminumImg },
@@ -26,15 +22,20 @@ const newsItems = [
   { date: "May 2023", title: "Max-Planck Partner Group", text: "DIIL is declared as a Max-Planck partner group led by Dr. Hanna Bishara with Max-Planck-Institut für Eisenforschung.", image: newsMaxPlanckImg },
 ];
 
-const teamPreview = [
-  { name: "Dr. Hanna Bishara", role: "Lab Director & PI", image: hannaImg },
-  { name: "Dr. Amram Azulay", role: "Senior Researcher", image: amramImg },
-  { name: "Dr. Gautam Kumar Pal", role: "Postdoc Researcher", image: gautamImg },
-  { name: "Saja Sarhan", role: "MSc. Candidate", image: sajaImg },
-  { name: "Omer Coriat", role: "MSc. Candidate", image: omerImg },
-];
-
 export default function HomePage() {
+  const [teamMembers, setTeamMembers] = useState<Person[]>([]);
+  const [loadingTeam, setLoadingTeam] = useState(true);
+
+  useEffect(() => {
+    api.get("/people")
+      .then((data: Person[]) => {
+        // Filter for members and take first 5
+        const members = data.filter((p) => p.type === "member").slice(0, 5);
+        setTeamMembers(members);
+      })
+      .catch(console.error)
+      .finally(() => setLoadingTeam(false));
+  }, []);
   return (
     <>
       {/* Hero */}
@@ -143,19 +144,29 @@ export default function HomePage() {
             title="People of DIIL"
             description="A multidisciplinary team dedicated to advancing our understanding of defects and interfaces."
           />
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-            {teamPreview.map((member, i) => (
-              <FadeIn key={member.name} delay={i * 0.08}>
-                <div className="text-center group">
-                  <div className="w-24 h-24 rounded-full bg-muted mx-auto mb-3 overflow-hidden ring-2 ring-transparent group-hover:ring-accent/40 transition-all duration-300">
-                    <img src={member.image} alt={member.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+          {loadingTeam ? (
+            <p className="text-center text-muted-foreground">Loading...</p>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+              {teamMembers.map((member, i) => (
+                <FadeIn key={member.id} delay={i * 0.08}>
+                  <div className="text-center group">
+                    <div className="w-24 h-24 rounded-full bg-muted mx-auto mb-3 overflow-hidden ring-2 ring-transparent group-hover:ring-accent/40 transition-all duration-300">
+                      {member.image ? (
+                        <img src={member.image} alt={member.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-primary/20 text-primary font-heading font-bold text-2xl">
+                          {member.name.split(" ").map((n) => n[0]).join("")}
+                        </div>
+                      )}
+                    </div>
+                    <p className="text-sm font-semibold text-foreground">{member.name}</p>
+                    <p className="text-xs text-muted-foreground">{member.role}</p>
                   </div>
-                  <p className="text-sm font-semibold text-foreground">{member.name}</p>
-                  <p className="text-xs text-muted-foreground">{member.role}</p>
-                </div>
-              </FadeIn>
-            ))}
-          </div>
+                </FadeIn>
+              ))}
+            </div>
+          )}
           <FadeIn className="mt-10 text-center">
             <Link to="/people" className="text-accent text-sm font-medium hover:underline inline-flex items-center gap-1">
               Meet the full team <ArrowRight size={14} />
