@@ -11,6 +11,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
   const navItems = [
     { path: "/admin/pages", label: "Pages" },
+    { path: "/admin/menus", label: "Menus" },
   ];
 
   return (

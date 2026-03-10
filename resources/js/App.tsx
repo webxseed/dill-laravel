@@ -9,6 +9,7 @@ import Facilities from "./pages/Facilities";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 import AdminPages from "./pages/admin/AdminPages";
+import AdminMenus from "./pages/admin/AdminMenus";
 
 const App = () => (
   <BrowserRouter>
@@ -26,6 +27,7 @@ const App = () => (
       {/* Admin routes */}
       <Route path="/admin" element={<AdminLayout />}>
         <Route path="pages" element={<AdminPages />} />
+        <Route path="menus" element={<AdminMenus />} />
       </Route>
       
       {/* 404 */}

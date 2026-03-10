@@ -5,8 +5,15 @@ use App\Http\Controllers\Api\PeopleController;
 use App\Http\Controllers\Api\ProductsController;
 use App\Http\Controllers\Api\ProjectsController;
 
+use App\Http\Controllers\Api\MenuItemsController;
 use App\Http\Controllers\Api\PagesController;
 use App\Http\Controllers\Api\SettingsController;
+
+// Menu routes
+Route::get('/menu', [MenuItemsController::class, 'index']);
+Route::post('/menu', [MenuItemsController::class, 'store']);
+Route::put('/menu/{id}', [MenuItemsController::class, 'update']);
+Route::delete('/menu/{id}', [MenuItemsController::class, 'destroy']);
 
 // People routes
 Route::get('/people', [PeopleController::class, 'index']);

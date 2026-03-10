@@ -3,20 +3,14 @@ import { Link, useLocation, Outlet } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import logo from "@/assets/logo.svg";
-
-const navLinks = [
-  { label: "Home", path: "/" },
-  { label: "People", path: "/people" },
-  { label: "Research", path: "/research" },
-  { label: "Projects", path: "/projects" },
-  { label: "Facilities", path: "/facilities" },
-  { label: "Contact", path: "/contact" },
-];
+import { api } from "@/lib/api";
 
 export default function SiteLayout() {
   const location = useLocation();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [navLinks, setNavLinks] = useState<{label: string, path: string}[]>([]);
+  const [footerLinks, setFooterLinks] = useState<{label: string, path: string}[]>([]);
   const isHome = location.pathname === "/";
   const useLight = isHome && !scrolled;
 
@@ -30,6 +24,12 @@ export default function SiteLayout() {
     setMobileOpen(false);
     window.scrollTo(0, 0);
   }, [location.pathname]);
+
+  useEffect(() => {
+    // Fetch menu items from API
+    api.getMenu('main').then(setNavLinks).catch(console.error);
+    api.getMenu('footer').then(setFooterLinks).catch(console.error);
+  }, []);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -138,7 +138,7 @@ export default function SiteLayout() {
                 Quick Links
               </h4>
               <div className="flex flex-col gap-2">
-                {navLinks.map((link) => (
+                {footerLinks.map((link) => (
                   <Link
                     key={link.path}
                     to={link.path}

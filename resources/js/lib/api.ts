@@ -47,6 +47,22 @@ export const api = {
     if (!res.ok) throw new Error('Failed to update settings');
     return res.json();
   },
+
+  async getMenu(menu: string) {
+    return this.get(`/menu?menu=${menu}`);
+  },
+
+  async saveMenuItem(item: Partial<MenuItem>) {
+    if (item.id) {
+      return this.put(`/menu/${item.id}`, item);
+    } else {
+      return this.post('/menu', item);
+    }
+  },
+
+  async deleteMenuItem(id: number) {
+    return this.delete(`/menu/${id}`);
+  },
 };
 
 // Types
@@ -93,4 +109,13 @@ export interface Settings {
   location_university: string;
   location_city: string;
   location_country: string;
+}
+
+export interface MenuItem {
+  id: number;
+  menu: string;
+  label: string;
+  path: string;
+  sort_order: number;
+  is_visible: boolean;
 }
