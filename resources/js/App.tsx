@@ -1,4 +1,5 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import SiteLayout from "@/components/SiteLayout";
 import AdminLayout from "@/components/AdminLayout";
 import Index from "./pages/Index";
@@ -8,9 +9,53 @@ import Projects from "./pages/Projects";
 import Facilities from "./pages/Facilities";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
+import Login from "./pages/Login";
 import AdminPages from "./pages/admin/AdminPages";
 import AdminMenus from "./pages/admin/AdminMenus";
 import AdminNews from "./pages/admin/AdminNews";
+import { api } from "./lib/api";
+
+function ProtectedRoute({ children }: { children: React.ReactNode }) {
+  const [loading, setLoading] = useState(true);
+  const [authorized, setAuthorized] = useState(false);
+
+  useEffect(() => {
+    setAuthorized(api.isLoggedIn());
+    setLoading(false);
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-lg">Loading...</div>
+      </div>
+    );
+  }
+
+  if (!authorized) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return <>{children}</>;
+}
+
+function AdminRoutes() {
+  const handleLogout = async () => {
+    await api.logout();
+    window.location.href = "/login";
+  };
+
+  return (
+    <AdminLayout onLogout={handleLogout}>
+      <Routes>
+        <Route path="pages" element={<AdminPages />} />
+        <Route path="menus" element={<AdminMenus />} />
+        <Route path="news" element={<AdminNews />} />
+        <Route path="*" element={<Navigate to="/admin/pages" replace />} />
+      </Routes>
+    </AdminLayout>
+  );
+}
 
 const App = () => (
   <BrowserRouter>
@@ -25,12 +70,18 @@ const App = () => (
         <Route path="/contact" element={<Contact />} />
       </Route>
       
+      {/* Login */}
+      <Route path="/login" element={<Login />} />
+      
       {/* Admin routes */}
-      <Route path="/admin" element={<AdminLayout />}>
-        <Route path="pages" element={<AdminPages />} />
-        <Route path="menus" element={<AdminMenus />} />
-        <Route path="news" element={<AdminNews />} />
-      </Route>
+      <Route
+        path="/admin/*"
+        element={
+          <ProtectedRoute>
+            <AdminRoutes />
+          </ProtectedRoute>
+        }
+      />
       
       {/* 404 */}
       <Route path="*" element={<NotFound />} />

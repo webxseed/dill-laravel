@@ -1,8 +1,12 @@
 const API_BASE = '/api';
 
+const getToken = () => localStorage.getItem('token');
+
 export const api = {
   async get(endpoint: string) {
-    const res = await fetch(`${API_BASE}${endpoint}`);
+    const res = await fetch(`${API_BASE}${endpoint}`, {
+      headers: authHeader(),
+    });
     if (!res.ok) throw new Error(`Failed to fetch ${endpoint}`);
     return res.json();
   },
@@ -10,7 +14,7 @@ export const api = {
   async post(endpoint: string, data: any) {
     const res = await fetch(`${API_BASE}${endpoint}`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...authHeader() },
       body: JSON.stringify(data),
     });
     if (!res.ok) throw new Error(`Failed to create ${endpoint}`);
@@ -20,7 +24,7 @@ export const api = {
   async put(endpoint: string, data: any) {
     const res = await fetch(`${API_BASE}${endpoint}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...authHeader() },
       body: JSON.stringify(data),
     });
     if (!res.ok) throw new Error(`Failed to update ${endpoint}`);
@@ -30,8 +34,46 @@ export const api = {
   async delete(endpoint: string) {
     const res = await fetch(`${API_BASE}${endpoint}`, {
       method: 'DELETE',
+      headers: authHeader(),
     });
     if (!res.ok) throw new Error(`Failed to delete ${endpoint}`);
+  },
+
+  async login(email: string, password: string) {
+    const res = await fetch(`${API_BASE}/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || 'Login failed');
+    }
+    const data = await res.json();
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('user', JSON.stringify(data.user));
+    return data;
+  },
+
+  async logout() {
+    try {
+      await fetch(`${API_BASE}/logout`, {
+        method: 'POST',
+        headers: authHeader(),
+      });
+    } finally {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+    }
+  },
+
+  isLoggedIn() {
+    return !!getToken();
+  },
+
+  getUser() {
+    const user = localStorage.getItem('user');
+    return user ? JSON.parse(user) : null;
   },
 
   async getSettings() {
@@ -41,7 +83,7 @@ export const api = {
   async updateSettings(settings: Record<string, string>) {
     const res = await fetch(`${API_BASE}/settings`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...authHeader() },
       body: JSON.stringify(settings),
     });
     if (!res.ok) throw new Error('Failed to update settings');
@@ -80,6 +122,11 @@ export const api = {
     return this.delete(`/news/${id}`);
   },
 };
+
+function authHeader() {
+  const token = getToken();
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
 
 // Types
 export interface Person {

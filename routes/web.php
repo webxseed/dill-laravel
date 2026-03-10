@@ -1,14 +1,9 @@
 <?php
 
-use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Route;
 
-// Admin routes (served via React)
-Route::get('/admin', function () {
-    return view('index');
+Route::get('/', function () {
+    return ['Laravel' => app()->version()];
 });
 
-// SPA fallback - must be last
-Route::get('/{path?}', function () {
-    return view('index');
-})->where('path', '.*');
+require __DIR__.'/auth.php';
