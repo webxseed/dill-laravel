@@ -3,7 +3,7 @@ import { Link, useLocation, Outlet } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import logo from "@/assets/logo.svg";
-import { api } from "@/lib/api";
+import { api, Settings } from "@/lib/api";
 
 export default function SiteLayout() {
   const location = useLocation();
@@ -11,6 +11,7 @@ export default function SiteLayout() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [navLinks, setNavLinks] = useState<{label: string, path: string}[]>([]);
   const [footerLinks, setFooterLinks] = useState<{label: string, path: string}[]>([]);
+  const [settings, setSettings] = useState<Settings | null>(null);
   const isHome = location.pathname === "/";
   const useLight = isHome && !scrolled;
 
@@ -26,9 +27,18 @@ export default function SiteLayout() {
   }, [location.pathname]);
 
   useEffect(() => {
-    // Fetch menu items from API
-    api.getMenu('main').then(setNavLinks).catch(console.error);
-    api.getMenu('footer').then(setFooterLinks).catch(console.error);
+    // Fetch menu items and settings from API
+    Promise.all([
+      api.getMenu('main'),
+      api.getMenu('footer'),
+      api.getSettings(),
+    ])
+      .then(([mainMenu, footerMenu, settingsData]) => {
+        setNavLinks(mainMenu);
+        setFooterLinks(footerMenu);
+        setSettings(settingsData as Settings);
+      })
+      .catch(console.error);
   }, []);
 
   return (
@@ -154,12 +164,12 @@ export default function SiteLayout() {
                 Contact
               </h4>
               <div className="text-sm text-primary-foreground/70 space-y-2">
-                <p>Dr. Hanna Bishara</p>
-                <p>Wolfson Building, Room 121</p>
-                <p>Tel Aviv University</p>
+                <p>{settings?.contact_name || 'Dr. Hanna Bishara'}</p>
+                <p>{settings?.location_room ? `${settings.location_building}, ${settings.location_room}` : settings?.location_building || 'Wolfson Building, Room 121'}</p>
+                <p>{settings?.location_university || 'Tel Aviv University'}</p>
                 <p>
-                  <a href="mailto:hbishara@tauex.tau.ac.il" className="hover:text-primary-foreground transition-colors">
-                    hbishara@tauex.tau.ac.il
+                  <a href={`mailto:${settings?.contact_email || 'hbishara@tauex.tau.ac.il'}`} className="hover:text-primary-foreground transition-colors">
+                    {settings?.contact_email || 'hbishara@tauex.tau.ac.il'}
                   </a>
                 </p>
               </div>

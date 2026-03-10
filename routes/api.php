@@ -6,8 +6,15 @@ use App\Http\Controllers\Api\ProductsController;
 use App\Http\Controllers\Api\ProjectsController;
 
 use App\Http\Controllers\Api\MenuItemsController;
+use App\Http\Controllers\Api\NewsController;
 use App\Http\Controllers\Api\PagesController;
 use App\Http\Controllers\Api\SettingsController;
+
+// News routes
+Route::get('/news', [NewsController::class, 'index']);
+Route::post('/news', [NewsController::class, 'store']);
+Route::put('/news/{id}', [NewsController::class, 'update']);
+Route::delete('/news/{id}', [NewsController::class, 'destroy']);
 
 // Menu routes
 Route::get('/menu', [MenuItemsController::class, 'index']);

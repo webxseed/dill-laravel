@@ -63,6 +63,22 @@ export const api = {
   async deleteMenuItem(id: number) {
     return this.delete(`/menu/${id}`);
   },
+
+  async getNews() {
+    return this.get('/news');
+  },
+
+  async saveNews(news: Partial<News>) {
+    if (news.id) {
+      return this.put(`/news/${news.id}`, news);
+    } else {
+      return this.post('/news', news);
+    }
+  },
+
+  async deleteNews(id: number) {
+    return this.delete(`/news/${id}`);
+  },
 };
 
 // Types
@@ -116,6 +132,16 @@ export interface MenuItem {
   menu: string;
   label: string;
   path: string;
+  sort_order: number;
+  is_visible: boolean;
+}
+
+export interface News {
+  id: number;
+  title: string;
+  text: string;
+  date: string;
+  image: string;
   sort_order: number;
   is_visible: boolean;
 }

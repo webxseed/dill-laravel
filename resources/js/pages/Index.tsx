@@ -3,39 +3,44 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { FadeIn, SectionHeader } from "@/components/FadeIn";
-import { api, Person } from "@/lib/api";
+import { api, Person, News } from "@/lib/api";
 import heroBg from "@/assets/hero-bg.jpg";
 import microstructureImg from "@/assets/microstructure-sem.jpg";
 import labImg from "@/assets/lab-environment.jpg";
 
-import newsLabImg from "@/assets/news/lab-construction.jpg";
-import newsAluminumImg from "@/assets/news/aluminum-alloys.jpg";
-import newsMembersImg from "@/assets/news/new-members.jpg";
-import newsIsfImg from "@/assets/news/isf-grant.jpg";
-import newsMaxPlanckImg from "@/assets/news/max-planck.jpg";
-
-const newsItems = [
-  { date: "February 2024", title: "Lab Construction Completed", text: "Lab construction completed! Instruments warming and running. Looking forward to cutting-edge research.", image: newsLabImg },
-  { date: "September 2023", title: "NOGA Funding Accepted", text: "A proposal project accepted for fund by NOGA company — studying highly-strong and highly conductive Aluminum alloys.", image: newsAluminumImg },
-  { date: "August 2023", title: "New Lab Members Join DIIL", text: "New members accepted to join DIIL starting from fall semester 2023: Dr. Gautam Kumar (Postdoc) and Ms. Saja Sarhan (MSc.).", image: newsMembersImg },
-  { date: "July 2023", title: "ISF Grant Awarded", text: "Proposal accepted for fund by ISF (Israel Science Foundation), including an equipment grant.", image: newsIsfImg },
-  { date: "May 2023", title: "Max-Planck Partner Group", text: "DIIL is declared as a Max-Planck partner group led by Dr. Hanna Bishara with Max-Planck-Institut für Eisenforschung.", image: newsMaxPlanckImg },
-];
-
 export default function HomePage() {
   const [teamMembers, setTeamMembers] = useState<Person[]>([]);
-  const [loadingTeam, setLoadingTeam] = useState(true);
+  const [newsItems, setNewsItems] = useState<News[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api.get("/people")
-      .then((data: Person[]) => {
-        // Filter for members and take first 5
-        const members = data.filter((p) => p.type === "member").slice(0, 5);
+    Promise.all([
+      api.get("/people"),
+      api.getNews(),
+    ])
+      .then(([people, news]) => {
+        const members = (people as Person[]).filter((p) => p.type === "member").slice(0, 5);
         setTeamMembers(members);
+        setNewsItems(news as News[]);
       })
       .catch(console.error)
-      .finally(() => setLoadingTeam(false));
+      .finally(() => setLoading(false));
   }, []);
+
+  const getNewsImage = (imagePath: string) => {
+    if (!imagePath) return heroBg;
+    // Map image path to assets
+    const images: Record<string, string> = {
+      'news/lab-construction.jpg': 'lab-construction.jpg',
+      'news/aluminum-alloys.jpg': 'aluminum-alloys.jpg',
+      'news/new-members.jpg': 'new-members.jpg',
+      'news/isf-grant.jpg': 'isf-grant.jpg',
+      'news/max-planck.jpg': 'max-planck.jpg',
+    };
+    // Return placeholder or mapped image
+    return heroBg;
+  };
+
   return (
     <>
       {/* Hero */}
@@ -144,29 +149,21 @@ export default function HomePage() {
             title="People of DIIL"
             description="A multidisciplinary team dedicated to advancing our understanding of defects and interfaces."
           />
-          {loadingTeam ? (
-            <p className="text-center text-muted-foreground">Loading...</p>
-          ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-              {teamMembers.map((member, i) => (
-                <FadeIn key={member.id} delay={i * 0.08}>
-                  <div className="text-center group">
-                    <div className="w-24 h-24 rounded-full bg-muted mx-auto mb-3 overflow-hidden ring-2 ring-transparent group-hover:ring-accent/40 transition-all duration-300">
-                      {member.image ? (
-                        <img src={member.image} alt={member.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-primary/20 text-primary font-heading font-bold text-2xl">
-                          {member.name.split(" ").map((n) => n[0]).join("")}
-                        </div>
-                      )}
-                    </div>
-                    <p className="text-sm font-semibold text-foreground">{member.name}</p>
-                    <p className="text-xs text-muted-foreground">{member.role}</p>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+            {teamMembers.map((member, i) => (
+              <FadeIn key={member.id} delay={i * 0.08}>
+                <div className="text-center group">
+                  <div className="w-24 h-24 rounded-full bg-muted mx-auto mb-3 overflow-hidden ring-2 ring-transparent group-hover:ring-accent/40 transition-all duration-300">
+                    {member.image && (
+                      <img src={member.image} alt={member.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                    )}
                   </div>
-                </FadeIn>
-              ))}
-            </div>
-          )}
+                  <p className="text-sm font-semibold text-foreground">{member.name}</p>
+                  <p className="text-xs text-muted-foreground">{member.role}</p>
+                </div>
+              </FadeIn>
+            ))}
+          </div>
           <FadeIn className="mt-10 text-center">
             <Link to="/people" className="text-accent text-sm font-medium hover:underline inline-flex items-center gap-1">
               Meet the full team <ArrowRight size={14} />
@@ -184,10 +181,10 @@ export default function HomePage() {
           />
           <div className="max-w-4xl mx-auto grid gap-6">
             {newsItems.map((item, i) => (
-              <FadeIn key={i} delay={i * 0.08}>
+              <FadeIn key={item.id} delay={i * 0.08}>
                 <div className="group bg-card rounded-lg border border-border overflow-hidden hover:shadow-lg hover:border-teal/40 transition-all duration-300 flex flex-col sm:flex-row">
                   <div className="sm:w-48 md:w-56 shrink-0 overflow-hidden">
-                    <img src={item.image} alt="" className="w-full h-40 sm:h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    <img src={heroBg} alt="" className="w-full h-40 sm:h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                   </div>
                   <div className="p-5 flex flex-col justify-center">
                     <span className="text-xs font-semibold text-accent tracking-wide mb-1 block">

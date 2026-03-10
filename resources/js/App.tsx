@@ -10,6 +10,7 @@ import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 import AdminPages from "./pages/admin/AdminPages";
 import AdminMenus from "./pages/admin/AdminMenus";
+import AdminNews from "./pages/admin/AdminNews";
 
 const App = () => (
   <BrowserRouter>
@@ -28,6 +29,7 @@ const App = () => (
       <Route path="/admin" element={<AdminLayout />}>
         <Route path="pages" element={<AdminPages />} />
         <Route path="menus" element={<AdminMenus />} />
+        <Route path="news" element={<AdminNews />} />
       </Route>
       
       {/* 404 */}
