@@ -13,8 +13,25 @@ export default function HomePage() {
   const [teamMembers, setTeamMembers] = useState<Person[]>([]);
   const [newsItems, setNewsItems] = useState<News[]>([]);
   const [loading, setLoading] = useState(true);
+  const [pageData, setPageData] = useState<{ meta_title?: string; meta_description?: string }>({});
 
   useEffect(() => {
+    // Update document title
+    document.title = pageData.meta_title || 'DIIL - Defects and Internal Interfaces Lab';
+    
+    // Update meta description
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) {
+      metaDesc.setAttribute('content', pageData.meta_description || '');
+    }
+  }, [pageData]);
+
+  useEffect(() => {
+    // Fetch page data
+    api.getPage('home')
+      .then(setPageData)
+      .catch(console.error);
+
     Promise.all([
       api.get("/people"),
       api.getNews(),

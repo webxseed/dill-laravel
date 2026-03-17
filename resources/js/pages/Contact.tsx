@@ -7,10 +7,25 @@ export default function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
   const [settings, setSettings] = useState<any>({});
+  const [pageData, setPageData] = useState<{ meta_title?: string; meta_description?: string }>({});
 
   useEffect(() => {
     api.getSettings().then(setSettings).catch(console.error);
   }, []);
+
+  useEffect(() => {
+    api.getPage('contact')
+      .then(setPageData)
+      .catch(console.error);
+  }, []);
+
+  useEffect(() => {
+    if (pageData.meta_title) {
+      document.title = pageData.meta_title;
+      const metaDesc = document.querySelector('meta[name="description"]');
+      if (metaDesc) metaDesc.setAttribute('content', pageData.meta_description || '');
+    }
+  }, [pageData]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

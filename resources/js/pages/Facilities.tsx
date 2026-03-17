@@ -16,6 +16,21 @@ interface FacilityCategory {
 export default function FacilitiesPage() {
   const [categories, setCategories] = useState<FacilityCategory[]>([]);
   const [loading, setLoading] = useState(true);
+  const [pageData, setPageData] = useState<{ meta_title?: string; meta_description?: string }>({});
+
+  useEffect(() => {
+    api.getPage('facilities')
+      .then(setPageData)
+      .catch(console.error);
+  }, []);
+
+  useEffect(() => {
+    if (pageData.meta_title) {
+      document.title = pageData.meta_title;
+      const metaDesc = document.querySelector('meta[name="description"]');
+      if (metaDesc) metaDesc.setAttribute('content', pageData.meta_description || '');
+    }
+  }, [pageData]);
 
   const getProductImage = (name: string) => {
     const nameLower = name.toLowerCase().replace(/\s+/g, '-');

@@ -1,5 +1,7 @@
+import { useEffect, useState } from "react";
 import { FadeIn, SectionHeader } from "@/components/FadeIn";
 import { ArrowRight } from "lucide-react";
+import { api } from "@/lib/api";
 
 const publications = [
   "H. Bishara, S. Lee, T. Brink, M. Ghidelli, G. Dehm: Understanding grain boundary electrical resistivity in Cu: the effect of boundary structure. ACS Nano 15 (10), 16607–16615 (2021).",
@@ -9,6 +11,22 @@ const publications = [
 ];
 
 export default function ResearchPage() {
+  const [pageData, setPageData] = useState<{ meta_title?: string; meta_description?: string }>({});
+
+  useEffect(() => {
+    api.getPage('research')
+      .then(setPageData)
+      .catch(console.error);
+  }, []);
+
+  useEffect(() => {
+    if (pageData.meta_title) {
+      document.title = pageData.meta_title;
+      const metaDesc = document.querySelector('meta[name="description"]');
+      if (metaDesc) metaDesc.setAttribute('content', pageData.meta_description || '');
+    }
+  }, [pageData]);
+
   return (
     <>
       {/* Header */}

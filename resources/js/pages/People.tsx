@@ -6,6 +6,21 @@ import { api, Person } from "@/lib/api";
 export default function PeoplePage() {
   const [people, setPeople] = useState<Person[]>([]);
   const [loading, setLoading] = useState(true);
+  const [pageData, setPageData] = useState<{ meta_title?: string; meta_description?: string }>({});
+
+  useEffect(() => {
+    api.getPage('people')
+      .then(setPageData)
+      .catch(console.error);
+  }, []);
+
+  useEffect(() => {
+    if (pageData.meta_title) {
+      document.title = pageData.meta_title;
+      const metaDesc = document.querySelector('meta[name="description"]');
+      if (metaDesc) metaDesc.setAttribute('content', pageData.meta_description || '');
+    }
+  }, [pageData]);
 
   const getPersonImage = (name: string) => {
     const nameLower = name.toLowerCase();

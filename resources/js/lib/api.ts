@@ -95,6 +95,10 @@ export const api = {
     return this.get('/settings');
   },
 
+  async getPage(slug: string) {
+    return this.get(`/pages/${slug}`);
+  },
+
   async updateSettings(settings: Record<string, string>) {
     const res = await fetch(`${API_BASE}/settings`, {
       method: 'PUT',
