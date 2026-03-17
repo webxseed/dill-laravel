@@ -54,6 +54,28 @@ export const api = {
     return res.json();
   },
 
+  async submitContact(form: { name: string; email: string; subject?: string; message: string }) {
+    const res = await fetch(`${API_BASE}/contact`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(form),
+    });
+    if (!res.ok) throw new Error('Failed to submit contact form');
+    return res.json();
+  },
+
+  async getContactSubmissions() {
+    return this.get('/contact-submissions');
+  },
+
+  async markContactAsRead(id: number) {
+    return this.put(`/contact-submissions/${id}/read`, {});
+  },
+
+  async deleteContactSubmission(id: number) {
+    return this.delete(`/contact-submissions/${id}`);
+  },
+
   async login(email: string, password: string) {
     const res = await fetch(`${API_BASE}/login`, {
       method: 'POST',

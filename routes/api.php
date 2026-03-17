@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\UploadController;
 use App\Http\Controllers\Api\PublicationsController;
 use App\Http\Controllers\Api\SiteConfigController;
 use App\Http\Controllers\Api\UsersController;
+use App\Http\Controllers\Api\ContactController;
 
 // Public routes
 Route::post('/login', [AuthController::class, 'login']);
@@ -86,6 +87,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // Upload routes
     Route::post('/upload', [UploadController::class, 'upload']);
     Route::delete('/upload', [UploadController::class, 'delete']);
+
+    // Contact submissions routes
+    Route::get('/contact-submissions', [ContactController::class, 'index']);
+    Route::put('/contact-submissions/{id}/read', [ContactController::class, 'markAsRead']);
+    Route::delete('/contact-submissions/{id}', [ContactController::class, 'destroy']);
 });
 
 // Public read-only routes
@@ -100,3 +106,6 @@ Route::get('/settings', [SettingsController::class, 'index']);
 Route::get('/menu', [MenuItemsController::class, 'index']);
 Route::get('/pages', [PagesController::class, 'index']);
 Route::get('/pages/{slug}', [PagesController::class, 'show']);
+
+// Public contact form submission
+Route::post('/contact', [ContactController::class, 'store']);

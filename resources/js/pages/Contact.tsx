@@ -27,9 +27,15 @@ export default function ContactPage() {
     }
   }, [pageData]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    try {
+      await api.submitContact(form);
+      setSubmitted(true);
+    } catch (err) {
+      console.error(err);
+      alert('Failed to send message. Please try again.');
+    }
   };
 
   const fullAddress = [

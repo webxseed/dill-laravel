@@ -19,6 +19,7 @@ export default function AdminLayout({ children, onLogout }: AdminLayoutProps) {
     { path: "/admin/facilities", label: "Facilities" },
     { path: "/admin/publications", label: "Publications" },
     { path: "/admin/site-config", label: "Home Config" },
+    { path: "/admin/contact", label: "Contact Submissions" },
     { path: "/admin/users", label: "Users" },
     { path: "/admin/settings", label: "Settings" },
   ];

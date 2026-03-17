@@ -20,6 +20,7 @@ import AdminSettings from "./pages/admin/AdminSettings";
 import AdminPublications from "./pages/admin/AdminPublications";
 import AdminSiteConfig from "./pages/admin/AdminSiteConfig";
 import AdminUsers from "./pages/admin/AdminUsers";
+import AdminContactSubmissions from "./pages/admin/AdminContactSubmissions";
 import { api } from "./lib/api";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -64,6 +65,7 @@ function AdminRoutes() {
         <Route path="publications" element={<AdminPublications />} />
         <Route path="site-config" element={<AdminSiteConfig />} />
         <Route path="users" element={<AdminUsers />} />
+        <Route path="contact" element={<AdminContactSubmissions />} />
         <Route path="settings" element={<AdminSettings />} />
         <Route path="*" element={<Navigate to="/admin/pages" replace />} />
       </Routes>
