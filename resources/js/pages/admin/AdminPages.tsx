@@ -1,11 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { api } from "@/lib/api";
+import RichEditor from "@/components/admin/RichEditor";
 
 interface Page {
   id: number;
   slug: string;
   title: string;
   content: string;
+  image: string;
   meta_title: string;
   meta_description: string;
   is_published: boolean;
@@ -16,6 +18,8 @@ export default function AdminPages() {
   const [editing, setEditing] = useState<Page | null>(null);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     loadPages();
@@ -67,10 +71,27 @@ export default function AdminPages() {
       slug: '',
       title: '',
       content: '',
+      image: '',
       meta_title: '',
       meta_description: '',
       is_published: true,
     });
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !editing) return;
+    
+    setUploading(true);
+    try {
+      const result = await api.upload(file, 'images/pages');
+      setEditing({ ...editing, image: result.path });
+    } catch (err) {
+      console.error('Upload failed:', err);
+      alert('Failed to upload image');
+    } finally {
+      setUploading(false);
+    }
   };
 
   return (
@@ -116,7 +137,7 @@ export default function AdminPages() {
           <div className="bg-card border border-border rounded-xl p-6">
             {editing ? (
               <>
-                <h2 className="font-semibold mb-4">Edit: {editing.title}</h2>
+                <h2 className="font-semibold mb-4">{editing.id ? 'Edit' : 'Add'} Page</h2>
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium mb-1">Slug</label>
@@ -137,12 +158,42 @@ export default function AdminPages() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1">Content (JSON)</label>
-                    <textarea
+                    <label className="block text-sm font-medium mb-1">Image</label>
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="hidden"
+                    />
+                    <div className="space-y-2">
+                      <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        disabled={uploading}
+                        className="text-sm bg-secondary text-foreground px-3 py-2 rounded-md hover:bg-secondary/80 disabled:opacity-50"
+                      >
+                        {uploading ? 'Uploading...' : 'Choose Image'}
+                      </button>
+                      {editing.image && (
+                        <div className="relative inline-block">
+                          <img src={editing.image} alt="Preview" className="h-20 w-auto rounded border" />
+                          <button
+                            type="button"
+                            onClick={() => setEditing({...editing, image: ''})}
+                            className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 text-xs"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Content</label>
+                    <RichEditor
                       value={editing.content}
-                      onChange={(e) => setEditing({ ...editing, content: e.target.value })}
-                      className="w-full px-3 py-2 rounded-md border border-border bg-background font-mono text-sm"
-                      rows={6}
+                      onChange={(value) => setEditing({ ...editing, content: value })}
                     />
                   </div>
                   <div>
