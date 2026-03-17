@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import AdminLayout from "@/components/AdminLayout";
+
 import { api } from "@/lib/api";
 
 interface ContactSubmission {
@@ -62,14 +62,14 @@ export default function AdminContactSubmissions() {
 
   if (loading) {
     return (
-      <AdminLayout>
+      
         <div className="text-center py-10">Loading...</div>
-      </AdminLayout>
+      
     );
   }
 
   return (
-    <AdminLayout>
+    
       <div>
         <h1 className="text-2xl font-bold mb-6">Contact Form Submissions</h1>
         
@@ -113,6 +113,6 @@ export default function AdminContactSubmissions() {
           )}
         </div>
       </div>
-    </AdminLayout>
+    
   );
 }

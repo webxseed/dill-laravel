@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import AdminLayout from "@/components/AdminLayout";
+
 import { api, Settings } from "@/lib/api";
 
 export default function AdminSettings() {
@@ -39,14 +39,14 @@ export default function AdminSettings() {
 
   if (loading) {
     return (
-      <AdminLayout>
+      
         <div className="text-center py-10">Loading...</div>
-      </AdminLayout>
+      
     );
   }
 
   return (
-    <AdminLayout>
+    
       <div>
         <h1 className="text-2xl font-bold mb-6">Site Settings</h1>
         
@@ -144,6 +144,6 @@ export default function AdminSettings() {
           </div>
         </div>
       </div>
-    </AdminLayout>
+    
   );
 }

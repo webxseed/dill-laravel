@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import AdminLayout from "@/components/AdminLayout";
+
 import { api, User } from "@/lib/api";
 
 export default function AdminUsers() {
@@ -57,7 +57,7 @@ export default function AdminUsers() {
   };
 
   return (
-    <AdminLayout>
+    
       <div>
         <h1 className="text-2xl font-bold mb-6">User Management</h1>
         
@@ -138,6 +138,6 @@ export default function AdminUsers() {
           </div>
         </div>
       </div>
-    </AdminLayout>
+    
   );
 }
