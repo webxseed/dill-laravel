@@ -116,9 +116,9 @@ export default function ResearchPage() {
           <SectionHeader title="Related Publications" label="Publications" />
           <div className="space-y-6">
             {publications.map((pub, i) => (
-              <FadeIn key={i} delay={i * 0.05}>
+              <FadeIn key={pub.id || i} delay={i * 0.05}>
                 <div className="border-l-2 border-accent/30 pl-6 py-1">
-                  <p className="text-sm text-muted-foreground leading-relaxed">{pub}</p>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{pub.citation}</p>
                 </div>
               </FadeIn>
             ))}
