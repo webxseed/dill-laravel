@@ -218,6 +218,22 @@ export const api = {
   async deletePublication(id: number) {
     return this.delete(`/publications/${id}`);
   },
+
+  async getUsers() {
+    return this.get('/users');
+  },
+
+  async saveUser(user: Partial<User>) {
+    if (user.id) {
+      return this.put(`/users/${user.id}`, user);
+    } else {
+      return this.post('/users', user);
+    }
+  },
+
+  async deleteUser(id: number) {
+    return this.delete(`/users/${id}`);
+  },
 };
 
 function authHeader() {
@@ -295,4 +311,11 @@ export interface Publication {
   id: number;
   citation: string;
   sort_order: number;
+}
+
+export interface User {
+  id: number;
+  name: string;
+  email: string;
+  password?: string;
 }

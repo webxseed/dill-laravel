@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\UploadController;
 use App\Http\Controllers\Api\PublicationsController;
 use App\Http\Controllers\Api\SiteConfigController;
+use App\Http\Controllers\Api\UsersController;
 
 // Public routes
 Route::post('/login', [AuthController::class, 'login']);
@@ -76,6 +77,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/site-config', [SiteConfigController::class, 'index']);
     Route::put('/site-config', [SiteConfigController::class, 'update']);
 
+    // Users routes
+    Route::get('/users', [UsersController::class, 'index']);
+    Route::post('/users', [UsersController::class, 'store']);
+    Route::put('/users/{id}', [UsersController::class, 'update']);
+    Route::delete('/users/{id}', [UsersController::class, 'destroy']);
+
     // Upload routes
     Route::post('/upload', [UploadController::class, 'upload']);
     Route::delete('/upload', [UploadController::class, 'delete']);
@@ -88,6 +95,7 @@ Route::get('/products', [ProductsController::class, 'index']);
 Route::get('/news', [NewsController::class, 'index']);
 Route::get('/publications', [PublicationsController::class, 'index']);
 Route::get('/site-config', [SiteConfigController::class, 'index']);
+Route::get('/users', [UsersController::class, 'index']);
 Route::get('/settings', [SettingsController::class, 'index']);
 Route::get('/menu', [MenuItemsController::class, 'index']);
 Route::get('/pages', [PagesController::class, 'index']);
