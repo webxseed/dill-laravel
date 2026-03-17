@@ -6,6 +6,7 @@ export default function AdminFacilities() {
   const [editing, setEditing] = useState<Product | null>(null);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [features, setFeatures] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -46,6 +47,7 @@ export default function AdminFacilities() {
   };
 
   const addNew = () => {
+    setFeatures(['']);
     setEditing({
       id: 0,
       name: '',
@@ -54,6 +56,40 @@ export default function AdminFacilities() {
       category: 'Materials Fabrication',
       sort_order: products.length + 1,
     });
+  };
+
+  // Load features when editing changes
+  useEffect(() => {
+    if (editing) {
+      let parsed: string[] = [];
+      if (editing.features) {
+        try {
+          parsed = typeof editing.features === 'string' 
+            ? JSON.parse(editing.features) 
+            : editing.features;
+        } catch {
+          parsed = [];
+        }
+      }
+      setFeatures(parsed.length > 0 ? parsed : ['']);
+    }
+  }, [editing?.id]);
+
+  const handleFeatureChange = (index: number, value: string) => {
+    const newFeatures = [...features];
+    newFeatures[index] = value;
+    setFeatures(newFeatures);
+    setEditing(editing ? { ...editing, features: JSON.stringify(newFeatures.filter(f => f.trim())) } : null);
+  };
+
+  const addFeature = () => {
+    setFeatures([...features, '']);
+  };
+
+  const removeFeature = (index: number) => {
+    const newFeatures = features.filter((_, i) => i !== index);
+    setFeatures(newFeatures);
+    setEditing(editing ? { ...editing, features: JSON.stringify(newFeatures.filter(f => f.trim())) } : null);
   };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -158,8 +194,38 @@ export default function AdminFacilities() {
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1">Features (one per line)</label>
-                    <textarea value={typeof editing.features === 'string' ? editing.features : (editing.features as unknown as string) || ''} onChange={(e) => setEditing({...editing, features: e.target.value})} className="w-full px-3 py-2 rounded-md border border-border bg-background" rows={4} placeholder="Feature 1&#10;Feature 2&#10;Feature 3" />
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="block text-sm font-medium">Features</label>
+                      <button
+                        type="button"
+                        onClick={addFeature}
+                        className="text-xs bg-secondary text-foreground px-2 py-1 rounded hover:bg-secondary/80"
+                      >
+                        + Add
+                      </button>
+                    </div>
+                    <div className="space-y-2">
+                      {features.map((feature, index) => (
+                        <div key={index} className="flex gap-2">
+                          <input
+                            type="text"
+                            value={feature}
+                            onChange={(e) => handleFeatureChange(index, e.target.value)}
+                            className="flex-1 px-3 py-2 rounded-md border border-border bg-background text-sm"
+                            placeholder={`Feature ${index + 1}`}
+                          />
+                          {features.length > 1 && (
+                            <button
+                              type="button"
+                              onClick={() => removeFeature(index)}
+                              className="text-red-500 hover:text-red-700 px-2"
+                            >
+                              ×
+                            </button>
+                          )}
+                        </div>
+                      ))}
+                    </div>
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-1">Sort Order</label>
