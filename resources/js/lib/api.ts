@@ -121,6 +121,54 @@ export const api = {
   async deleteNews(id: number) {
     return this.delete(`/news/${id}`);
   },
+
+  async getProjects() {
+    return this.get('/projects');
+  },
+
+  async saveProject(project: Partial<Project>) {
+    if (project.id) {
+      return this.put(`/projects/${project.id}`, project);
+    } else {
+      return this.post('/projects', project);
+    }
+  },
+
+  async deleteProject(id: number) {
+    return this.delete(`/projects/${id}`);
+  },
+
+  async getPeople() {
+    return this.get('/people');
+  },
+
+  async savePerson(person: Partial<Person>) {
+    if (person.id) {
+      return this.put(`/people/${person.id}`, person);
+    } else {
+      return this.post('/people', person);
+    }
+  },
+
+  async deletePerson(id: number) {
+    return this.delete(`/people/${id}`);
+  },
+
+  async getProducts() {
+    return this.get('/products');
+  },
+
+  async saveProduct(product: Partial<Product>) {
+    if (product.id) {
+      return this.put(`/products/${product.id}`, product);
+    } else {
+      return this.post('/products', product);
+    }
+  },
+
+  async deleteProduct(id: number) {
+    return this.delete(`/products/${id}`);
+  },
 };
 
 function authHeader() {

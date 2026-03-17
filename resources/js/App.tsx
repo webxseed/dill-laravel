@@ -13,6 +13,9 @@ import Login from "./pages/Login";
 import AdminPages from "./pages/admin/AdminPages";
 import AdminMenus from "./pages/admin/AdminMenus";
 import AdminNews from "./pages/admin/AdminNews";
+import AdminProjects from "./pages/admin/AdminProjects";
+import AdminPeople from "./pages/admin/AdminPeople";
+import AdminFacilities from "./pages/admin/AdminFacilities";
 import { api } from "./lib/api";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -51,6 +54,9 @@ function AdminRoutes() {
         <Route path="pages" element={<AdminPages />} />
         <Route path="menus" element={<AdminMenus />} />
         <Route path="news" element={<AdminNews />} />
+        <Route path="projects" element={<AdminProjects />} />
+        <Route path="people" element={<AdminPeople />} />
+        <Route path="facilities" element={<AdminFacilities />} />
         <Route path="*" element={<Navigate to="/admin/pages" replace />} />
       </Routes>
     </AdminLayout>
