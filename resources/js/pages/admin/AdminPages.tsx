@@ -34,15 +34,43 @@ export default function AdminPages() {
     if (!editing) return;
     setSaving(true);
     try {
-      await api.put(`/pages/${editing.id}`, editing);
+      if (editing.id) {
+        await api.put(`/pages/${editing.id}`, editing);
+      } else {
+        await api.post('/pages', editing);
+      }
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
+      setEditing(null);
       loadPages();
     } catch (e) {
       console.error(e);
     } finally {
       setSaving(false);
     }
+  };
+
+  const handleDelete = async (id: number) => {
+    if (!confirm('Delete this page?')) return;
+    try {
+      await api.delete(`/pages/${id}`);
+      loadPages();
+      if (editing?.id === id) setEditing(null);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const addNew = () => {
+    setEditing({
+      id: 0,
+      slug: '',
+      title: '',
+      content: '',
+      meta_title: '',
+      meta_description: '',
+      is_published: true,
+    });
   };
 
   return (
@@ -52,22 +80,33 @@ export default function AdminPages() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Pages List */}
           <div className="bg-card border border-border rounded-xl p-6">
-            <h2 className="font-semibold mb-4">All Pages</h2>
-            <div className="space-y-2">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="font-semibold">All Pages</h2>
+              <button onClick={addNew} className="text-sm bg-accent text-accent-foreground px-3 py-1 rounded-md">
+                + Add
+              </button>
+            </div>
+            <div className="space-y-2 max-h-[500px] overflow-y-auto">
               {pages.map((page) => (
                 <div
                   key={page.id}
-                  className={`p-3 rounded-lg border cursor-pointer transition-colors ${
+                  className={`p-3 rounded-lg border flex justify-between items-center ${
                     editing?.id === page.id
                       ? "border-accent bg-accent/5"
                       : "border-border hover:border-accent/50"
                   }`}
                   onClick={() => setEditing(page)}
                 >
-                  <div className="flex justify-between items-center">
+                  <div>
                     <span className="font-medium">{page.title}</span>
-                    <span className="text-xs text-muted-foreground">/{page.slug}</span>
+                    <span className="text-xs text-muted-foreground ml-2">/{page.slug}</span>
                   </div>
+                  <button 
+                    onClick={(e) => { e.stopPropagation(); handleDelete(page.id); }}
+                    className="text-xs text-red-500 hover:underline"
+                  >
+                    Delete
+                  </button>
                 </div>
               ))}
             </div>
