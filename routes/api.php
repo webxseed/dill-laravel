@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\PagesController;
 use App\Http\Controllers\Api\SettingsController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\UploadController;
+use App\Http\Controllers\Api\PublicationsController;
 
 // Public routes
 Route::post('/login', [AuthController::class, 'login']);
@@ -64,6 +65,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::put('/news/{id}', [NewsController::class, 'update']);
     Route::delete('/news/{id}', [NewsController::class, 'destroy']);
 
+    // Publications routes
+    Route::get('/publications', [PublicationsController::class, 'index']);
+    Route::post('/publications', [PublicationsController::class, 'store']);
+    Route::put('/publications/{id}', [PublicationsController::class, 'update']);
+    Route::delete('/publications/{id}', [PublicationsController::class, 'destroy']);
+
     // Upload routes
     Route::post('/upload', [UploadController::class, 'upload']);
     Route::delete('/upload', [UploadController::class, 'delete']);
@@ -74,6 +81,7 @@ Route::get('/people', [PeopleController::class, 'index']);
 Route::get('/projects', [ProjectsController::class, 'index']);
 Route::get('/products', [ProductsController::class, 'index']);
 Route::get('/news', [NewsController::class, 'index']);
+Route::get('/publications', [PublicationsController::class, 'index']);
 Route::get('/settings', [SettingsController::class, 'index']);
 Route::get('/menu', [MenuItemsController::class, 'index']);
 Route::get('/pages', [PagesController::class, 'index']);

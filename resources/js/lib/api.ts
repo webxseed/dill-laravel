@@ -188,6 +188,22 @@ export const api = {
   async deleteProduct(id: number) {
     return this.delete(`/products/${id}`);
   },
+
+  async getPublications() {
+    return this.get('/publications');
+  },
+
+  async savePublication(publication: Partial<Publication>) {
+    if (publication.id) {
+      return this.put(`/publications/${publication.id}`, publication);
+    } else {
+      return this.post('/publications', publication);
+    }
+  },
+
+  async deletePublication(id: number) {
+    return this.delete(`/publications/${id}`);
+  },
 };
 
 function authHeader() {
@@ -259,4 +275,10 @@ export interface News {
   image: string;
   sort_order: number;
   is_visible: boolean;
+}
+
+export interface Publication {
+  id: number;
+  citation: string;
+  sort_order: number;
 }

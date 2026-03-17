@@ -1,21 +1,21 @@
 import { useEffect, useState } from "react";
 import { FadeIn, SectionHeader } from "@/components/FadeIn";
 import { ArrowRight } from "lucide-react";
-import { api } from "@/lib/api";
-
-const publications = [
-  "H. Bishara, S. Lee, T. Brink, M. Ghidelli, G. Dehm: Understanding grain boundary electrical resistivity in Cu: the effect of boundary structure. ACS Nano 15 (10), 16607–16615 (2021).",
-  "H. Bishara, M. Ghidelli, G. Dehm: Approaches to measure the resistivity of grain boundaries in metals with high sensitivity and spatial resolution: a case study employing Cu. ACS Applied Electronic Materials 2 (7), 2049-2056 (2020).",
-  "T. Luo, F. Serrano-Sánchez, H. Bishara, S. Zhang, R. Bueno Villoro, J.J. Kuo, C. Felser, C. Scheu, G. J. Snyder, J. P. Best, G. Dehm, Y. Yu, D. Raabe, C. Fu, B. Gault: Dopant-segregation to grain boundaries controls electrical conductivity of n-type NbCo (Pt) Sn half-Heusler alloy mediating thermoelectric performance. Acta Materialia, 117147 (2021).",
-  "H. Bishara, H. Tsybenko, S. Nandy, Q.K. Muhammad, T. Frömling, X. Fang, J.P. Best, G. Dehm: Dislocation-enhanced electrical conductivity in rutile TiO2 accessed by nano-mechanical doping. Scripta Materialia, 212, 114543 (2022).",
-];
+import { api, Publication } from "@/lib/api";
 
 export default function ResearchPage() {
   const [pageData, setPageData] = useState<{ meta_title?: string; meta_description?: string }>({});
+  const [publications, setPublications] = useState<Publication[]>([]);
 
   useEffect(() => {
     api.getPage('research')
       .then(setPageData)
+      .catch(console.error);
+  }, []);
+
+  useEffect(() => {
+    api.getPublications()
+      .then(setPublications)
       .catch(console.error);
   }, []);
 
