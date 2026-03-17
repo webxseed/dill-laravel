@@ -14,6 +14,7 @@ export default function HomePage() {
   const [newsItems, setNewsItems] = useState<News[]>([]);
   const [loading, setLoading] = useState(true);
   const [pageData, setPageData] = useState<{ meta_title?: string; meta_description?: string }>({});
+  const [siteConfig, setSiteConfig] = useState<Record<string, string>>({});
 
   useEffect(() => {
     // Update document title
@@ -30,6 +31,11 @@ export default function HomePage() {
     // Fetch page data
     api.getPage('home')
       .then(setPageData)
+      .catch(console.error);
+
+    // Fetch site config
+    api.getSiteConfig()
+      .then(setSiteConfig)
       .catch(console.error);
 
     Promise.all([
@@ -80,19 +86,16 @@ export default function HomePage() {
             transition={{ duration: 0.8 }}
           >
             <span className="text-copper-light text-sm tracking-[0.25em] uppercase font-medium mb-4 block">
-              Tel Aviv University
+              {siteConfig.home_hero_subtitle || 'Tel Aviv University'}
             </span>
             <div className="inline-block mb-4">
               <img src={logoImg} alt="DIIL Logo" className="h-20 md:h-24 w-auto" />
             </div>
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-heading font-extrabold text-primary-foreground leading-tight tracking-tight">
-              Defects and Internal
-              <br />
-              Interfaces Lab
+              {siteConfig.home_hero_title || 'Defects and Internal Interfaces Lab'}
             </h1>
             <p className="mt-6 text-primary-foreground/80 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
-              Investigating the local electrical properties of individual defects and
-              internal interface segments with respect to their microstructure.
+              {siteConfig.home_hero_description || 'Investigating the local electrical properties of individual defects and internal interface segments with respect to their microstructure.'}
             </p>
             <div className="mt-10 flex flex-wrap gap-4 justify-center">
               <Link
@@ -128,9 +131,9 @@ export default function HomePage() {
       <section className="section-padding bg-gold-light/70">
         <div className="container-wide mx-auto">
           <SectionHeader
-            label="About the Lab"
-            title="Advancing Materials Science"
-            description="The Defects and Internal Interfaces Lab (DIIL) studies local electron transport properties across microstructural defects in alloys and across interfaces between metallic materials."
+            label={siteConfig.home_about_label || 'About the Lab'}
+            title={siteConfig.home_about_title || 'Advancing Materials Science'}
+            description={siteConfig.home_about_description || 'The Defects and Internal Interfaces Lab (DIIL) studies local electron transport properties across microstructural defects in alloys and across interfaces between metallic materials.'}
           />
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
             <FadeIn>
@@ -167,9 +170,9 @@ export default function HomePage() {
       <section className="section-padding bg-teal-light/20">
         <div className="container-wide mx-auto">
           <SectionHeader
-            label="Our Team"
-            title="People of DIIL"
-            description="A multidisciplinary team dedicated to advancing our understanding of defects and interfaces."
+            label={siteConfig.home_team_label || 'Our Team'}
+            title={siteConfig.home_team_title || 'People of DIIL'}
+            description={siteConfig.home_team_description || 'A multidisciplinary team dedicated to advancing our understanding of defects and interfaces.'}
           />
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
             {teamMembers.map((member, i) => (
@@ -202,8 +205,8 @@ export default function HomePage() {
       <section className="section-padding bg-gold-light/60">
         <div className="container-wide mx-auto">
           <SectionHeader
-            label="Updates"
-            title="News & Announcements"
+            label={siteConfig.home_news_label || 'Updates'}
+            title={siteConfig.home_news_title || 'News & Announcements'}
           />
           <div className="max-w-4xl mx-auto grid gap-6">
             {newsItems.map((item, i) => (
@@ -233,11 +236,10 @@ export default function HomePage() {
         <div className="container-narrow mx-auto text-center">
           <FadeIn>
             <h2 className="text-3xl md:text-4xl font-heading font-bold text-primary-foreground mb-4 tracking-tight">
-              Interested in Collaborating?
+              {siteConfig.home_cta_title || 'Interested in Collaborating?'}
             </h2>
             <p className="text-primary-foreground/70 max-w-xl mx-auto mb-8">
-              DIIL welcomes excellent PhD candidates, postdocs, and collaborators.
-              Get in touch to explore opportunities.
+              {siteConfig.home_cta_description || 'DIIL welcomes excellent PhD candidates, postdocs, and collaborators. Get in touch to explore opportunities.'}
             </p>
             <Link
               to="/contact"

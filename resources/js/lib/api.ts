@@ -99,6 +99,20 @@ export const api = {
     return this.get(`/pages/${slug}`);
   },
 
+  async getSiteConfig() {
+    return this.get('/site-config');
+  },
+
+  async updateSiteConfig(config: Record<string, string>) {
+    const res = await fetch(`${API_BASE}/site-config`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', ...authHeader() },
+      body: JSON.stringify(config),
+    });
+    if (!res.ok) throw new Error('Failed to update site config');
+    return res.json();
+  },
+
   async updateSettings(settings: Record<string, string>) {
     const res = await fetch(`${API_BASE}/settings`, {
       method: 'PUT',
