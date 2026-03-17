@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import AdminLayout from "@/components/AdminLayout";
 import { api, Product } from "@/lib/api";
 
 export default function AdminFacilities() {
@@ -64,8 +63,7 @@ export default function AdminFacilities() {
   ];
 
   return (
-    <AdminLayout>
-      <div>
+    <div>
         <h1 className="text-2xl font-bold mb-6">Facilities/Equipment Management</h1>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -137,6 +135,5 @@ export default function AdminFacilities() {
           </div>
         </div>
       </div>
-    </AdminLayout>
   );
 }

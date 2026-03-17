@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import AdminLayout from "@/components/AdminLayout";
 import { api, MenuItem } from "@/lib/api";
 
 export default function AdminMenus() {
@@ -57,8 +56,7 @@ export default function AdminMenus() {
   };
 
   return (
-    <AdminLayout>
-      <div>
+    <div>
         <h1 className="text-2xl font-bold mb-6">Menu Management</h1>
         
         <div className="flex gap-4 mb-6">
@@ -187,6 +185,5 @@ export default function AdminMenus() {
           </div>
         </div>
       </div>
-    </AdminLayout>
   );
 }
