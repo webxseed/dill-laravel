@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\MenuItemsController;
 use App\Http\Controllers\Api\PagesController;
 use App\Http\Controllers\Api\SettingsController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\UploadController;
 
 // Public routes
 Route::post('/login', [AuthController::class, 'login']);
@@ -62,6 +63,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/news', [NewsController::class, 'store']);
     Route::put('/news/{id}', [NewsController::class, 'update']);
     Route::delete('/news/{id}', [NewsController::class, 'destroy']);
+
+    // Upload routes
+    Route::post('/upload', [UploadController::class, 'upload']);
+    Route::delete('/upload', [UploadController::class, 'delete']);
 });
 
 // Public read-only routes

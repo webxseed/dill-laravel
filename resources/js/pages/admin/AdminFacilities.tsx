@@ -1,10 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { api, Product } from "@/lib/api";
 
 export default function AdminFacilities() {
   const [products, setProducts] = useState<Product[]>([]);
   const [editing, setEditing] = useState<Product | null>(null);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     loadProducts();
@@ -52,6 +54,22 @@ export default function AdminFacilities() {
       category: 'Materials Fabrication',
       sort_order: products.length + 1,
     });
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !editing) return;
+    
+    setUploading(true);
+    try {
+      const result = await api.upload(file, 'images/facilities');
+      setEditing({ ...editing, image: result.path });
+    } catch (err) {
+      console.error('Upload failed:', err);
+      alert('Failed to upload image');
+    } finally {
+      setUploading(false);
+    }
   };
 
   const categories = [
@@ -108,8 +126,36 @@ export default function AdminFacilities() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1">Image URL</label>
-                    <input type="text" value={editing.image || ''} onChange={(e) => setEditing({...editing, image: e.target.value})} className="w-full px-3 py-2 rounded-md border border-border bg-background" placeholder="/images/facilities/..." />
+                    <label className="block text-sm font-medium mb-1">Image</label>
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="hidden"
+                    />
+                    <div className="space-y-2">
+                      <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        disabled={uploading}
+                        className="text-sm bg-secondary text-foreground px-3 py-2 rounded-md hover:bg-secondary/80 disabled:opacity-50"
+                      >
+                        {uploading ? 'Uploading...' : 'Choose Image'}
+                      </button>
+                      {editing.image && (
+                        <div className="relative inline-block">
+                          <img src={editing.image} alt="Preview" className="h-20 w-auto rounded border" />
+                          <button
+                            type="button"
+                            onClick={() => setEditing({...editing, image: ''})}
+                            className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 text-xs"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-1">Features (one per line)</label>

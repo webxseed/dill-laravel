@@ -39,6 +39,21 @@ export const api = {
     if (!res.ok) throw new Error(`Failed to delete ${endpoint}`);
   },
 
+  async upload(file: File, folder: string = 'uploads') {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('folder', folder);
+    
+    const token = getToken();
+    const res = await fetch(`${API_BASE}/upload`, {
+      method: 'POST',
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      body: formData,
+    });
+    if (!res.ok) throw new Error('Failed to upload file');
+    return res.json();
+  },
+
   async login(email: string, password: string) {
     const res = await fetch(`${API_BASE}/login`, {
       method: 'POST',
