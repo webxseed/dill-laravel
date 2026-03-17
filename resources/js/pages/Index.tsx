@@ -15,6 +15,15 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const [pageData, setPageData] = useState<{ meta_title?: string; meta_description?: string }>({});
   const [siteConfig, setSiteConfig] = useState<Record<string, string>>({});
+  const [isEditing, setIsEditing] = useState(false);
+  const [editConfig, setEditConfig] = useState<Record<string, string>>({});
+  const [saving, setSaving] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  // Check auth status
+  useEffect(() => {
+    setIsAuthenticated(api.isLoggedIn());
+  }, []);
 
   useEffect(() => {
     // Update document title
@@ -35,7 +44,10 @@ export default function HomePage() {
 
     // Fetch site config
     api.getSiteConfig()
-      .then(setSiteConfig)
+      .then((data) => {
+        setSiteConfig(data);
+        setEditConfig(data);
+      })
       .catch(console.error);
 
     Promise.all([
@@ -71,8 +83,59 @@ export default function HomePage() {
     return labImg;
   };
 
+  const handleSaveConfig = async () => {
+    setSaving(true);
+    try {
+      await api.updateSiteConfig(editConfig);
+      setSiteConfig(editConfig);
+      setIsEditing(false);
+    } catch (e) {
+      console.error(e);
+      alert('Failed to save');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const toggleEdit = () => {
+    if (isEditing) {
+      setEditConfig(siteConfig);
+    }
+    setIsEditing(!isEditing);
+  };
+
   return (
     <>
+      {/* Edit Button */}
+      {isAuthenticated && (
+        <div className="fixed top-20 right-4 z-50">
+          {isEditing ? (
+            <div className="flex gap-2">
+              <button
+                onClick={handleSaveConfig}
+                disabled={saving}
+                className="bg-green-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-green-700 disabled:opacity-50"
+              >
+                {saving ? 'Saving...' : 'Save All'}
+              </button>
+              <button
+                onClick={toggleEdit}
+                className="bg-gray-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-gray-700"
+              >
+                Cancel
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={toggleEdit}
+              className="bg-accent text-accent-foreground px-4 py-2 rounded-md text-sm font-medium hover:bg-accent/90"
+            >
+              Edit Home
+            </button>
+          )}
+        </div>
+      )}
+
       {/* Hero */}
       <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0">
@@ -85,18 +148,48 @@ export default function HomePage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <span className="text-copper-light text-sm tracking-[0.25em] uppercase font-medium mb-4 block">
-              {siteConfig.home_hero_subtitle || 'Tel Aviv University'}
-            </span>
+            {isEditing ? (
+              <input
+                type="text"
+                value={editConfig.home_hero_subtitle || ''}
+                onChange={(e) => setEditConfig({ ...editConfig, home_hero_subtitle: e.target.value })}
+                className="bg-transparent text-copper-light text-sm tracking-[0.25em] uppercase font-medium mb-4 block w-full border-b border-white/30 focus:border-white outline-none"
+                placeholder="Hero Subtitle"
+              />
+            ) : (
+              <span className="text-copper-light text-sm tracking-[0.25em] uppercase font-medium mb-4 block">
+                {siteConfig.home_hero_subtitle || 'Tel Aviv University'}
+              </span>
+            )}
             <div className="inline-block mb-4">
               <img src={logoImg} alt="DIIL Logo" className="h-20 md:h-24 w-auto" />
             </div>
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-heading font-extrabold text-primary-foreground leading-tight tracking-tight">
-              {siteConfig.home_hero_title || 'Defects and Internal Interfaces Lab'}
-            </h1>
-            <p className="mt-6 text-primary-foreground/80 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
-              {siteConfig.home_hero_description || 'Investigating the local electrical properties of individual defects and internal interface segments with respect to their microstructure.'}
-            </p>
+            {isEditing ? (
+              <input
+                type="text"
+                value={editConfig.home_hero_title || ''}
+                onChange={(e) => setEditConfig({ ...editConfig, home_hero_title: e.target.value })}
+                className="bg-transparent text-4xl md:text-6xl lg:text-7xl font-heading font-extrabold text-primary-foreground leading-tight tracking-tight w-full border-b border-white/30 focus:border-white outline-none mb-4"
+                placeholder="Hero Title"
+              />
+            ) : (
+              <h1 className="text-4xl md:text-6xl lg:text-7xl font-heading font-extrabold text-primary-foreground leading-tight tracking-tight">
+                {siteConfig.home_hero_title || 'Defects and Internal Interfaces Lab'}
+              </h1>
+            )}
+            {isEditing ? (
+              <textarea
+                value={editConfig.home_hero_description || ''}
+                onChange={(e) => setEditConfig({ ...editConfig, home_hero_description: e.target.value })}
+                className="bg-transparent mt-6 text-primary-foreground/80 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed w-full border border-white/30 rounded p-2 focus:border-white outline-none"
+                placeholder="Hero Description"
+                rows={3}
+              />
+            ) : (
+              <p className="mt-6 text-primary-foreground/80 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
+                {siteConfig.home_hero_description || 'Investigating the local electrical properties of individual defects and internal interface segments with respect to their microstructure.'}
+              </p>
+            )}
             <div className="mt-10 flex flex-wrap gap-4 justify-center">
               <Link
                 to="/research"
@@ -130,11 +223,37 @@ export default function HomePage() {
       {/* About */}
       <section className="section-padding bg-gold-light/70">
         <div className="container-wide mx-auto">
-          <SectionHeader
-            label={siteConfig.home_about_label || 'About the Lab'}
-            title={siteConfig.home_about_title || 'Advancing Materials Science'}
-            description={siteConfig.home_about_description || 'The Defects and Internal Interfaces Lab (DIIL) studies local electron transport properties across microstructural defects in alloys and across interfaces between metallic materials.'}
-          />
+          {isEditing ? (
+            <div className="space-y-4 mb-8 bg-white/50 p-4 rounded-lg">
+              <input
+                type="text"
+                value={editConfig.home_about_label || ''}
+                onChange={(e) => setEditConfig({ ...editConfig, home_about_label: e.target.value })}
+                className="w-full px-3 py-2 rounded-md border border-border bg-background text-center"
+                placeholder="About Label"
+              />
+              <input
+                type="text"
+                value={editConfig.home_about_title || ''}
+                onChange={(e) => setEditConfig({ ...editConfig, home_about_title: e.target.value })}
+                className="w-full px-3 py-2 rounded-md border border-border bg-background text-center text-3xl font-heading font-bold"
+                placeholder="About Title"
+              />
+              <textarea
+                value={editConfig.home_about_description || ''}
+                onChange={(e) => setEditConfig({ ...editConfig, home_about_description: e.target.value })}
+                className="w-full px-3 py-2 rounded-md border border-border bg-background"
+                rows={3}
+                placeholder="About Description"
+              />
+            </div>
+          ) : (
+            <SectionHeader
+              label={siteConfig.home_about_label || 'About the Lab'}
+              title={siteConfig.home_about_title || 'Advancing Materials Science'}
+              description={siteConfig.home_about_description || 'The Defects and Internal Interfaces Lab (DIIL) studies local electron transport properties across microstructural defects in alloys and across interfaces between metallic materials.'}
+            />
+          )}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
             <FadeIn>
               <div className="rounded-xl overflow-hidden shadow-lg">
@@ -169,11 +288,37 @@ export default function HomePage() {
       {/* Team Preview */}
       <section className="section-padding bg-teal-light/20">
         <div className="container-wide mx-auto">
-          <SectionHeader
-            label={siteConfig.home_team_label || 'Our Team'}
-            title={siteConfig.home_team_title || 'People of DIIL'}
-            description={siteConfig.home_team_description || 'A multidisciplinary team dedicated to advancing our understanding of defects and interfaces.'}
-          />
+          {isEditing ? (
+            <div className="space-y-4 mb-8 bg-white/50 p-4 rounded-lg">
+              <input
+                type="text"
+                value={editConfig.home_team_label || ''}
+                onChange={(e) => setEditConfig({ ...editConfig, home_team_label: e.target.value })}
+                className="w-full px-3 py-2 rounded-md border border-border bg-background text-center"
+                placeholder="Team Label"
+              />
+              <input
+                type="text"
+                value={editConfig.home_team_title || ''}
+                onChange={(e) => setEditConfig({ ...editConfig, home_team_title: e.target.value })}
+                className="w-full px-3 py-2 rounded-md border border-border bg-background text-center text-3xl font-heading font-bold"
+                placeholder="Team Title"
+              />
+              <textarea
+                value={editConfig.home_team_description || ''}
+                onChange={(e) => setEditConfig({ ...editConfig, home_team_description: e.target.value })}
+                className="w-full px-3 py-2 rounded-md border border-border bg-background"
+                rows={2}
+                placeholder="Team Description"
+              />
+            </div>
+          ) : (
+            <SectionHeader
+              label={siteConfig.home_team_label || 'Our Team'}
+              title={siteConfig.home_team_title || 'People of DIIL'}
+              description={siteConfig.home_team_description || 'A multidisciplinary team dedicated to advancing our understanding of defects and interfaces.'}
+            />
+          )}
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
             {teamMembers.map((member, i) => (
               <FadeIn key={member.id} delay={i * 0.08}>
@@ -204,10 +349,29 @@ export default function HomePage() {
       {/* News */}
       <section className="section-padding bg-gold-light/60">
         <div className="container-wide mx-auto">
-          <SectionHeader
-            label={siteConfig.home_news_label || 'Updates'}
-            title={siteConfig.home_news_title || 'News & Announcements'}
-          />
+          {isEditing ? (
+            <div className="space-y-4 mb-8 bg-white/50 p-4 rounded-lg max-w-2xl mx-auto">
+              <input
+                type="text"
+                value={editConfig.home_news_label || ''}
+                onChange={(e) => setEditConfig({ ...editConfig, home_news_label: e.target.value })}
+                className="w-full px-3 py-2 rounded-md border border-border bg-background text-center"
+                placeholder="News Label"
+              />
+              <input
+                type="text"
+                value={editConfig.home_news_title || ''}
+                onChange={(e) => setEditConfig({ ...editConfig, home_news_title: e.target.value })}
+                className="w-full px-3 py-2 rounded-md border border-border bg-background text-center text-3xl font-heading font-bold"
+                placeholder="News Title"
+              />
+            </div>
+          ) : (
+            <SectionHeader
+              label={siteConfig.home_news_label || 'Updates'}
+              title={siteConfig.home_news_title || 'News & Announcements'}
+            />
+          )}
           <div className="max-w-4xl mx-auto grid gap-6">
             {newsItems.map((item, i) => (
               <FadeIn key={item.id} delay={i * 0.08}>
@@ -235,12 +399,33 @@ export default function HomePage() {
       <section className="section-padding bg-primary">
         <div className="container-narrow mx-auto text-center">
           <FadeIn>
-            <h2 className="text-3xl md:text-4xl font-heading font-bold text-primary-foreground mb-4 tracking-tight">
-              {siteConfig.home_cta_title || 'Interested in Collaborating?'}
-            </h2>
-            <p className="text-primary-foreground/70 max-w-xl mx-auto mb-8">
-              {siteConfig.home_cta_description || 'DIIL welcomes excellent PhD candidates, postdocs, and collaborators. Get in touch to explore opportunities.'}
-            </p>
+            {isEditing ? (
+              <div className="space-y-4">
+                <input
+                  type="text"
+                  value={editConfig.home_cta_title || ''}
+                  onChange={(e) => setEditConfig({ ...editConfig, home_cta_title: e.target.value })}
+                  className="w-full bg-transparent text-3xl md:text-4xl font-heading font-bold text-primary-foreground mb-4 tracking-tight border-b border-white/30 focus:border-white outline-none"
+                  placeholder="CTA Title"
+                />
+                <textarea
+                  value={editConfig.home_cta_description || ''}
+                  onChange={(e) => setEditConfig({ ...editConfig, home_cta_description: e.target.value })}
+                  className="w-full bg-transparent text-primary-foreground/70 max-w-xl mx-auto mb-8 border border-white/30 rounded p-2 focus:border-white outline-none"
+                  rows={2}
+                  placeholder="CTA Description"
+                />
+              </div>
+            ) : (
+              <>
+                <h2 className="text-3xl md:text-4xl font-heading font-bold text-primary-foreground mb-4 tracking-tight">
+                  {siteConfig.home_cta_title || 'Interested in Collaborating?'}
+                </h2>
+                <p className="text-primary-foreground/70 max-w-xl mx-auto mb-8">
+                  {siteConfig.home_cta_description || 'DIIL welcomes excellent PhD candidates, postdocs, and collaborators. Get in touch to explore opportunities.'}
+                </p>
+              </>
+            )}
             <Link
               to="/contact"
               className="inline-flex items-center gap-2 bg-accent text-accent-foreground px-8 py-3 rounded-md text-sm font-medium hover:bg-accent/90 transition-colors"
