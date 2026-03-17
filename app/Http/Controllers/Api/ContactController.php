@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\ContactSubmission;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Http;
 
 class ContactController extends Controller
 {
@@ -29,21 +29,31 @@ class ContactController extends Controller
         $settings = \App\Models\Setting::pluck('value', 'key')->toArray();
         $toEmail = $settings['contact_email'] ?? config('mail.from.address', 'admin@example.com');
         
+        $content = "New contact form submission:\n\n" .
+            "Name: {$request->name}\n" .
+            "Email: {$request->email}\n" .
+            "Subject: {$request->subject}\n\n" .
+            "Message:\n{$request->message}";
+
         try {
-            Mail::raw(
-                "New contact form submission:\n\n" .
-                "Name: {$request->name}\n" .
-                "Email: {$request->email}\n" .
-                "Subject: {$request->subject}\n\n" .
-                "Message:\n{$request->message}",
-                function ($message) use ($toEmail) {
-                    $message->to($toEmail)
-                        ->subject('New Contact Form Submission - DIIL');
-                }
-            );
+            $payload = [
+                'api_key' => 'a7f3b9d2c1e84f6ab0c9d3e8f2b6a1c4',
+                'subject' => 'New Contact Form Submission - DIIL',
+                'content' => $content,
+                'recipients' => $toEmail,
+                'from' => 'DIIL-Materials',
+                'from_name' => 'DIIL-Materials'
+            ];
+
+            $response = Http::acceptJson()
+                ->withHeaders(['Content-Type' => 'application/json'])
+                ->post('https://crm.webxceed.com/api/send-email', $payload);
+
+            if (!$response->successful()) {
+                \Log::error('Email API error', ['status' => $response->status(), 'body' => $response->body()]);
+            }
         } catch (\Exception $e) {
-            // Log error but don't fail the request
-            \Log::error('Contact form email failed: ' . $e->getMessage());
+            \Log::error('Email API exception', ['message' => $e->getMessage()]);
         }
 
         return response()->json($submission, 201);
