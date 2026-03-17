@@ -1,6 +1,3 @@
-Warning: A partial dump from a server that has GTIDs will by default include the GTIDs of all transactions, even those that changed suppressed parts of the database. If you don't want to restore GTIDs, pass --set-gtid-purged=OFF. To make a complete dump, pass --all-databases --triggers --routines --events. 
-Warning: A dump from a server that has GTIDs enabled will by default include the GTIDs of all transactions, even those that were executed during its extraction and might not be represented in the dumped data. This might result in an inconsistent data dump. 
-In order to ensure a consistent backup of the database, pass --single-transaction or --lock-all-tables or --source-data. 
 -- MySQL dump 10.13  Distrib 9.6.0, for macos15.7 (arm64)
 --
 -- Host: localhost    Database: dill
@@ -24,7 +21,7 @@ SET @@SESSION.SQL_LOG_BIN= 0;
 -- GTID state at the beginning of the backup 
 --
 
-SET @@GLOBAL.GTID_PURGED=/*!80000 '+'*/ 'cce9ab8c-c595-11f0-a547-f00a60c4b643:1-8109';
+SET @@GLOBAL.GTID_PURGED=/*!80000 '+'*/ 'cce9ab8c-c595-11f0-a547-f00a60c4b643:1-8213';
 
 --
 -- Table structure for table `cache`
@@ -207,7 +204,7 @@ CREATE TABLE `migrations` (
   `migration` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `batch` int NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -216,7 +213,7 @@ CREATE TABLE `migrations` (
 
 LOCK TABLES `migrations` WRITE;
 /*!40000 ALTER TABLE `migrations` DISABLE KEYS */;
-INSERT INTO `migrations` VALUES (1,'0001_01_01_000000_create_users_table',1),(2,'0001_01_01_000001_create_cache_table',1),(3,'0001_01_01_000002_create_jobs_table',1),(4,'2026_03_09_223712_create_people_table',1),(5,'2026_03_09_223712_create_products_table',1),(6,'2026_03_09_223712_create_projects_table',1),(7,'2026_03_09_232322_create_settings_table',1),(8,'2026_03_10_212252_create_pages_table',2),(9,'2026_03_10_213728_create_menu_items_table',3),(10,'2026_03_10_214253_create_news_table',4);
+INSERT INTO `migrations` VALUES (1,'0001_01_01_000000_create_users_table',1),(2,'0001_01_01_000001_create_cache_table',1),(3,'0001_01_01_000002_create_jobs_table',1),(4,'2026_03_09_223712_create_people_table',1),(5,'2026_03_09_223712_create_products_table',1),(6,'2026_03_09_223712_create_projects_table',1),(7,'2026_03_09_232322_create_settings_table',1),(8,'2026_03_10_212252_create_pages_table',1),(9,'2026_03_10_213728_create_menu_items_table',1),(10,'2026_03_10_214253_create_news_table',1),(11,'2026_03_10_225217_create_personal_access_tokens_table',1);
 /*!40000 ALTER TABLE `migrations` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -247,7 +244,7 @@ CREATE TABLE `news` (
 
 LOCK TABLES `news` WRITE;
 /*!40000 ALTER TABLE `news` DISABLE KEYS */;
-INSERT INTO `news` VALUES (1,'Lab Construction Completed','Lab construction completed! Instruments warming and running. Looking forward to cutting-edge research.','February 2024','news/lab-construction.jpg',1,1,NULL,NULL),(2,'NOGA Funding Accepted','A proposal project accepted for fund by NOGA company — studying highly-strong and highly conductive Aluminum alloys.','September 2023','news/aluminum-alloys.jpg',2,1,NULL,NULL),(3,'New Lab Members Join DIIL','New members accepted to join DIIL starting from fall semester 2023: Dr. Gautam Kumar (Postdoc) and Ms. Saja Sarhan (MSc.).','August 2023','news/new-members.jpg',3,1,NULL,NULL),(4,'ISF Grant Awarded','Proposal accepted for fund by ISF (Israel Science Foundation), including an equipment grant.','July 2023','news/isf-grant.jpg',4,1,NULL,NULL),(5,'Max-Planck Partner Group','DIIL is declared as a Max-Planck partner group led by Dr. Hanna Bishara with Max-Planck-Institut für Eisenforschung.','May 2023','news/max-planck.jpg',5,1,NULL,NULL);
+INSERT INTO `news` VALUES (1,'Lab Construction Completed','Lab construction completed! Instruments warming and running. Looking forward to cutting-edge research.','February 2024','/images/news/lab-construction.jpg',1,1,NULL,NULL),(2,'NOGA Funding Accepted','A proposal project accepted for fund by NOGA company — studying highly-strong and highly conductive Aluminum alloys.','September 2023','/images/news/aluminum-alloys.jpg',2,1,NULL,NULL),(3,'New Lab Members Join DIIL','New members accepted to join DIIL starting from fall semester 2023: Dr. Gautam Kumar (Postdoc) and Ms. Saja Sarhan (MSc.).','August 2023','/images/news/new-members.jpg',3,1,NULL,NULL),(4,'ISF Grant Awarded','Proposal accepted for fund by ISF (Israel Science Foundation), including an equipment grant.','July 2023','/images/news/isf-grant.jpg',4,1,NULL,NULL),(5,'Max-Planck Partner Group','DIIL is declared as a Max-Planck partner group led by Dr. Hanna Bishara with Max-Planck-Institut für Eisenforschung.','May 2023','/images/news/max-planck.jpg',5,1,NULL,NULL);
 /*!40000 ALTER TABLE `news` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -270,7 +267,7 @@ CREATE TABLE `pages` (
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `pages_slug_unique` (`slug`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -279,7 +276,6 @@ CREATE TABLE `pages` (
 
 LOCK TABLES `pages` WRITE;
 /*!40000 ALTER TABLE `pages` DISABLE KEYS */;
-INSERT INTO `pages` VALUES (1,'home','Defects and Internal Interfaces Lab','{\"hero_title\":\"Defects and Internal Interfaces Lab\",\"hero_subtitle\":\"Investigating the local electrical properties of individual defects and internal interface segments with respect to their microstructure.\",\"about_title\":\"Advancing Materials Science\",\"about_description\":\"The Defects and Internal Interfaces Lab (DIIL) studies local electron transport properties across microstructural defects in alloys and across interfaces between metallic materials.\",\"cta_title\":\"Interested in Collaborating?\",\"cta_description\":\"DIIL welcomes excellent PhD candidates, postdocs, and collaborators. Get in touch to explore opportunities.\"}','DIIL - Defects and Internal Interfaces Lab','Defects and Internal Interfaces Lab - Tel Aviv University',1,NULL,NULL),(2,'about','About DIIL','{\"description\":\"The Defects and Internal Interfaces Lab (DIIL) studies local electron transport properties across microstructural defects in alloys and across interfaces between metallic materials.\"}','About - DIIL','Learn about the Defects and Internal Interfaces Lab at Tel Aviv University',1,NULL,NULL),(3,'research','Research','{\"description\":\"Our research focuses on understanding electron scattering at defects and internal interfaces in materials.\"}','Research - DIIL','Research focus areas of the Defects and Internal Interfaces Lab',1,NULL,NULL),(4,'contact','Contact Us','{\"contact_name\":\"Dr. Hanna Bishara\",\"contact_email\":\"hbishara@tauex.tau.ac.il\",\"location_building\":\"Wolfson Building\",\"location_room\":\"Room 121\",\"location_faculty\":\"Faculty of Engineering\",\"location_university\":\"Tel Aviv University\",\"location_city\":\"Tel Aviv\",\"location_country\":\"Israel\"}','Contact - DIIL','Contact the Defects and Internal Interfaces Lab',1,NULL,NULL);
 /*!40000 ALTER TABLE `pages` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -338,8 +334,42 @@ CREATE TABLE `people` (
 
 LOCK TABLES `people` WRITE;
 /*!40000 ALTER TABLE `people` DISABLE KEYS */;
-INSERT INTO `people` VALUES (1,'Dr. Hanna Bishara','Lab Director & Principal Investigator','hbishara@tauex.tau.ac.il','Wolfson Building, Room 121','Faculty member in Materials Science and Engineering at TAU since July 2022. Spent 3.5 years in Max-Planck-Institut für Eisenforschung (Germany) as a postdoctoral researcher. PhD, MSc, and BSc in Materials Science and Engineering at Technion.',NULL,1,'member',NULL,1,NULL,NULL),(2,'Dr. Amram Azulay','Lab Engineer & Researcher','ami2@tauex.tau.ac.il',NULL,'Gained expertise in Materials Science and Engineering focusing on electronic and thermal transport properties of bulk thermoelectric oxides. Employing point defect engineering, phase mixture, and ball mill processing.',NULL,1,'member',NULL,2,NULL,NULL),(3,'Dr. Gautam Kumar Pal','Postdoctoral Researcher','gautamkumar@tauex.tau.ac.il',NULL,'Investigating contact resistivity between functional alloy and conductive alloys through local electrical measurements. Studies the electrical-mechanical properties interplay in cast 6xxx Al-alloy.',NULL,1,'member',NULL,3,NULL,NULL),(4,'Saja Sarhan','MSc. Candidate','sajasarhan@tauex.tau.ac.il',NULL,'Completed bachelor studies in fall 2023 in Materials Science and Engineering at TAU. For her masters, studies the segregation and precipitation in Cu-Mn alloys and their impact on local physical properties of grain boundaries.',NULL,0,'member',NULL,4,NULL,NULL),(5,'Omer Coriat','MSc. Candidate','omercoriat@tauex.tau.ac.il',NULL,'Investigates the local electrical properties of 3D printed 6xxx Al-alloys to reveal resistivity mechanisms and improve the mechanical-electrical interplay. Co-supervised with Dr. Vladimir Popov.',NULL,0,'member',NULL,5,NULL,NULL),(6,'Michael Cohen','MSc. 2023',NULL,NULL,NULL,NULL,0,'alumni','Grain boundary segregation in Cu-Ni alloys',10,NULL,NULL),(7,'Yael Levi','BSc. Project 2023',NULL,NULL,NULL,NULL,0,'alumni','Thin film deposition and characterization',11,NULL,NULL),(8,'Daniel Stern','BSc. Project 2023',NULL,NULL,NULL,NULL,0,'alumni','Electrical measurements methodology',12,NULL,NULL);
+INSERT INTO `people` VALUES (1,'Dr. Hanna Bishara','Lab Director & Principal Investigator','hbishara@tauex.tau.ac.il','Wolfson Building, Room 121','Faculty member in Materials Science and Engineering at TAU since July 2022. Spent 3.5 years in Max-Planck-Institut für Eisenforschung (Germany) as a postdoctoral researcher. PhD, MSc, and BSc in Materials Science and Engineering at Technion.','/images/people/hanna.avif',1,'member',NULL,1,NULL,NULL),(2,'Dr. Amram Azulay','Lab Engineer & Researcher','ami2@tauex.tau.ac.il',NULL,'Gained expertise in Materials Science and Engineering focusing on electronic and thermal transport properties of bulk thermoelectric oxides. Employing point defect engineering, phase mixture, and ball mill processing.','/images/people/amram.avif',1,'member',NULL,2,NULL,NULL),(3,'Dr. Gautam Kumar Pal','Postdoctoral Researcher','gautamkumar@tauex.tau.ac.il',NULL,'Investigating contact resistivity between functional alloy and conductive alloys through local electrical measurements. Studies the electrical-mechanical properties interplay in cast 6xxx Al-alloy.','/images/people/gautam.avif',1,'member',NULL,3,NULL,NULL),(4,'Saja Sarhan','MSc. Candidate','sajasarhan@tauex.tau.ac.il',NULL,'Completed bachelor studies in fall 2023 in Materials Science and Engineering at TAU. For her masters, studies the segregation and precipitation in Cu-Mn alloys and their impact on local physical properties of grain boundaries.','/images/people/saja.avif',0,'member',NULL,4,NULL,NULL),(5,'Omer Coriat','MSc. Candidate','omercoriat@tauex.tau.ac.il',NULL,'Investigates the local electrical properties of 3D printed 6xxx Al-alloys to reveal resistivity mechanisms and improve the mechanical-electrical interplay. Co-supervised with Dr. Vladimir Popov.','/images/people/omer.avif',0,'member',NULL,5,NULL,NULL),(6,'Michael Cohen','MSc. 2023',NULL,NULL,NULL,NULL,0,'alumni','Grain boundary segregation in Cu-Ni alloys',10,NULL,NULL),(7,'Yael Levi','BSc. Project 2023',NULL,NULL,NULL,NULL,0,'alumni','Thin film deposition and characterization',11,NULL,NULL),(8,'Daniel Stern','BSc. Project 2023',NULL,NULL,NULL,NULL,0,'alumni','Electrical measurements methodology',12,NULL,NULL);
 /*!40000 ALTER TABLE `people` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `personal_access_tokens`
+--
+
+DROP TABLE IF EXISTS `personal_access_tokens`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `personal_access_tokens` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `tokenable_type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tokenable_id` bigint unsigned NOT NULL,
+  `name` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `token` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `abilities` text COLLATE utf8mb4_unicode_ci,
+  `last_used_at` timestamp NULL DEFAULT NULL,
+  `expires_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `personal_access_tokens_token_unique` (`token`),
+  KEY `personal_access_tokens_tokenable_type_tokenable_id_index` (`tokenable_type`,`tokenable_id`),
+  KEY `personal_access_tokens_expires_at_index` (`expires_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `personal_access_tokens`
+--
+
+LOCK TABLES `personal_access_tokens` WRITE;
+/*!40000 ALTER TABLE `personal_access_tokens` DISABLE KEYS */;
+/*!40000 ALTER TABLE `personal_access_tokens` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -368,7 +398,7 @@ CREATE TABLE `products` (
 
 LOCK TABLES `products` WRITE;
 /*!40000 ALTER TABLE `products` DISABLE KEYS */;
-INSERT INTO `products` VALUES (1,'Induction Melting Furnace','[\"Bulk alloy fabrication by induction melting\",\"Heating up to 2000 \\u00b0C\",\"High purity Ar atmosphere\",\"Graphite and copper dies \\u2013 volume ~20 cm\\u00b3\"]',NULL,'Materials Fabrication',1,NULL,NULL),(2,'Magnetron Sputtering Machine','[\"Turbo pump, vacuum level\",\"Two active cathodes, dc + ac\",\"Substrate heating to 600\\u00b0C\"]',NULL,'Materials Fabrication',2,NULL,NULL),(3,'Inert Atmosphere & Vacuum Tube Furnaces','[\"Annealing with high purity Ar\",\"Pre-vacuum of E-01 mbar\",\"Heating up to 1000\\u00b0C\",\"Ramp control\"]',NULL,'Heat Treatments',10,NULL,NULL),(4,'Vacuum Furnace','[\"Base pressure 10E-5 mbar\",\"Heating up to 1000\\u00b0C\",\"Self-designed (with a company)\"]',NULL,'Heat Treatments',11,NULL,NULL),(5,'Burnout Furnace','[\"Heating up to 1000\\u00b0C\",\"20 liter chamber\"]',NULL,'Heat Treatments',12,NULL,NULL),(6,'Cold Rolling','[\"Rolling at planes starting from thickness of 8mm\",\"Automatic flow\",\"Control over the speed of advance\",\"Suitable for materials up to hardness 64\"]',NULL,'Mechanical Treatments',20,NULL,NULL),(7,'Multi Directional Forging','[\"100kN load cell\",\"Compression and three-point bending\",\"Load or displacement control\"]',NULL,'Mechanical Treatments',21,NULL,NULL),(8,'Cutting Wheel Disk','[\"Load cell to control feed rate\",\"Multiple disk materials\",\"Water-cooled cutting\"]',NULL,'Sample Preparation',30,NULL,NULL),(9,'Diamond Wire Saw','[\"Very smooth cut surface, minimal deformation\",\"Control of cutting force and wire speed\",\"Water-cooled\"]',NULL,'Sample Preparation',31,NULL,NULL),(10,'Automatic Polishing Machine','[\"Control over time and speed\",\"From abrasive grinding to OPS polishing\",\"Wide range of polishing cloths and liquids\"]',NULL,'Sample Preparation',32,NULL,NULL),(11,'Vibro-polishing Machine','[\"Control of vibration frequency and force\",\"A range of polishing cloths and liquids\",\"Extremely smooth deformation free surfaces\"]',NULL,'Sample Preparation',33,NULL,NULL),(12,'Optical Microscope','[\"Up to 100x objective lenses\",\"Bright field and Dark field\",\"Multiple filters\",\"Camera features and image analyses\"]',NULL,'Material Characterization',40,NULL,NULL),(13,'Benchtop Scanning Electron Microscope (SEM)','[\"SE and BSE detectors\",\"EDS\",\"Large samples are also possible\",\"Variable vacuum level\"]',NULL,'Material Characterization',41,NULL,NULL),(14,'Nano-probing Nano-manipulators System','[\"Perform local electrical measurements inside SEM\",\"Four independent probes\",\"Compatible with Phenom and Zeiss SEMs\",\"Nano-manipulators move at exact range between motors to nano scale\"]',NULL,'Material Characterization',42,NULL,NULL),(15,'Keithley Devices','[\"Nano-Voltmeter\",\"Sensitive current generator\",\"Ability to measure fractions of mili Ohms in metals\"]',NULL,'Material Characterization',43,NULL,NULL),(16,'Probing Station','[\"Four probes, manually aligned\",\"Heating range to 680\\u00b0C, and cooling to liquid nitrogen\",\"Accurate temperature ramp control\",\"Suitable for Con. dap Pause method\"]',NULL,'Material Characterization',44,NULL,NULL),(17,'Nanoindenter','[\"Berkovich tip\",\"Linear arrays of nano-indentation\",\"From \\u00b5N up to 500 mN\"]',NULL,'Material Characterization',45,NULL,NULL);
+INSERT INTO `products` VALUES (1,'Induction Melting Furnace','[\"Bulk alloy fabrication by induction melting\",\"Heating up to 2000 \\u00b0C\",\"High purity Ar atmosphere\",\"Graphite and copper dies \\u2013 volume ~20 cm\\u00b3\"]','/images/facilities/induction-melting-furnace.avif','Materials Fabrication',1,NULL,NULL),(2,'Magnetron Sputtering Machine','[\"Turbo pump, vacuum level\",\"Two active cathodes, dc + ac\",\"Substrate heating to 600\\u00b0C\"]','/images/facilities/magnetron-sputtering.avif','Materials Fabrication',2,NULL,NULL),(3,'Inert Atmosphere & Vacuum Tube Furnaces','[\"Annealing with high purity Ar\",\"Pre-vacuum of E-01 mbar\",\"Heating up to 1000\\u00b0C\",\"Ramp control\"]','/images/facilities/inert-tube-furnaces.avif','Heat Treatments',10,NULL,NULL),(4,'Vacuum Furnace','[\"Base pressure 10E-5 mbar\",\"Heating up to 1000\\u00b0C\",\"Self-designed (with a company)\"]','/images/facilities/vacuum-furnace.avif','Heat Treatments',11,NULL,NULL),(5,'Burnout Furnace','[\"Heating up to 1000\\u00b0C\",\"20 liter chamber\"]','/images/facilities/burnout-furnace.avif','Heat Treatments',12,NULL,NULL),(6,'Cold Rolling','[\"Rolling at planes starting from thickness of 8mm\",\"Automatic flow\",\"Control over the speed of advance\",\"Suitable for materials up to hardness 64\"]','/images/facilities/cold-rolling.avif','Mechanical Treatments',20,NULL,NULL),(7,'Multi Directional Forging','[\"100kN load cell\",\"Compression and three-point bending\",\"Load or displacement control\"]','/images/facilities/multi-directional-forging.avif','Mechanical Treatments',21,NULL,NULL),(8,'Cutting Wheel Disk','[\"Load cell to control feed rate\",\"Multiple disk materials\",\"Water-cooled cutting\"]','/images/facilities/cutting-wheel-disk.avif','Sample Preparation',30,NULL,NULL),(9,'Diamond Wire Saw','[\"Very smooth cut surface, minimal deformation\",\"Control of cutting force and wire speed\",\"Water-cooled\"]','/images/facilities/diamond-wire-saw.avif','Sample Preparation',31,NULL,NULL),(10,'Automatic Polishing Machine','[\"Control over time and speed\",\"From abrasive grinding to OPS polishing\",\"Wide range of polishing cloths and liquids\"]','/images/facilities/automatic-polishing-machine.avif','Sample Preparation',32,NULL,NULL),(11,'Vibro-polishing Machine','[\"Control of vibration frequency and force\",\"A range of polishing cloths and liquids\",\"Extremely smooth deformation free surfaces\"]','/images/facilities/vibro-polishing-machine.avif','Sample Preparation',33,NULL,NULL),(12,'Optical Microscope','[\"Up to 100x objective lenses\",\"Bright field and Dark field\",\"Multiple filters\",\"Camera features and image analyses\"]','/images/facilities/optical-microscope.avif','Material Characterization',40,NULL,NULL),(13,'Benchtop Scanning Electron Microscope (SEM)','[\"SE and BSE detectors\",\"EDS\",\"Large samples are also possible\",\"Variable vacuum level\"]','/images/facilities/benchtop-sem.avif','Material Characterization',41,NULL,NULL),(14,'Nano-probing Nano-manipulators System','[\"Perform local electrical measurements inside SEM\",\"Four independent probes\",\"Compatible with Phenom and Zeiss SEMs\",\"Nano-manipulators move at exact range between motors to nano scale\"]','/images/facilities/nano-probing.avif','Material Characterization',42,NULL,NULL),(15,'Keithley Devices','[\"Nano-Voltmeter\",\"Sensitive current generator\",\"Ability to measure fractions of mili Ohms in metals\"]','/images/facilities/keithley-devices.avif','Material Characterization',43,NULL,NULL),(16,'Probing Station','[\"Four probes, manually aligned\",\"Heating range to 680\\u00b0C, and cooling to liquid nitrogen\",\"Accurate temperature ramp control\",\"Suitable for Con. dap Pause method\"]','/images/facilities/probing-station.avif','Material Characterization',44,NULL,NULL),(17,'Nanoindenter','[\"Berkovich tip\",\"Linear arrays of nano-indentation\",\"From \\u00b5N up to 500 mN\"]','/images/facilities/nanoindenter.avif','Material Characterization',45,NULL,NULL);
 /*!40000 ALTER TABLE `products` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -488,7 +518,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'Test User','test@example.com','2026-03-10 10:11:31','$2y$12$PZMNkNfXTpi/ykSj/ylr/ew3M25Dg9AXSTdrERsDEbTYEqz2w4srO','0HGWGuDvuD','2026-03-10 10:11:31','2026-03-10 10:11:31');
+INSERT INTO `users` VALUES (1,'Test User','test@example.com','2026-03-11 08:47:27','$2y$12$dRU6Rz0aKEAJFsoXy6.Gge3hSy0r8C2KbZ/0lrydgpINtDnd6e9H.','y3Fsr9lHhn','2026-03-11 08:47:27','2026-03-11 08:47:27');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 SET @@SESSION.SQL_LOG_BIN = @MYSQLDUMP_TEMP_LOG_BIN;
@@ -502,4 +532,4 @@ SET @@SESSION.SQL_LOG_BIN = @MYSQLDUMP_TEMP_LOG_BIN;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-03-11  0:19:37
+-- Dump completed on 2026-03-11 12:47:43

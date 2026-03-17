@@ -14,5 +14,6 @@ class Project extends Model
         'period',
         'status',
         'sort_order',
+        'image',
     ];
 }

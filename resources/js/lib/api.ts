@@ -152,6 +152,7 @@ export interface Project {
   period?: string;
   status: 'current' | 'previous';
   sort_order: number;
+  image?: string;
 }
 
 export interface Product {

@@ -49,23 +49,30 @@ export default function ProjectsPage() {
           <div className="space-y-8">
             {currentProjects.map((project, i) => (
               <FadeIn key={project.id} delay={i * 0.1}>
-                <div className="bg-card border border-border rounded-xl p-8 hover:shadow-md transition-shadow">
-                  <h3 className="text-xl font-heading font-semibold text-foreground mb-2">
-                    {project.title}
-                  </h3>
-                  <p className="text-sm text-accent font-medium italic mb-4">
-                    {project.funding}
-                  </p>
-                  {project.detail && (
-                    <p className="text-sm text-muted-foreground leading-relaxed mb-3">
-                      {project.detail}
-                    </p>
+                <div className="bg-card border border-border rounded-xl overflow-hidden hover:shadow-md transition-shadow">
+                  {project.image && (
+                    <div className="w-full h-48 md:h-56 overflow-hidden">
+                      <img src={project.image} alt={project.title} className="w-full h-full object-cover" />
+                    </div>
                   )}
-                  {project.summary && (
-                    <p className="text-sm text-foreground/80 leading-relaxed">
-                      {project.summary}
+                  <div className="p-8">
+                    <h3 className="text-xl font-heading font-semibold text-foreground mb-2">
+                      {project.title}
+                    </h3>
+                    <p className="text-sm text-accent font-medium italic mb-4">
+                      {project.funding}
                     </p>
-                  )}
+                    {project.detail && (
+                      <p className="text-sm text-muted-foreground leading-relaxed mb-3">
+                        {project.detail}
+                      </p>
+                    )}
+                    {project.summary && (
+                      <p className="text-sm text-foreground/80 leading-relaxed">
+                        {project.summary}
+                      </p>
+                    )}
+                  </div>
                 </div>
               </FadeIn>
             ))}

@@ -7,6 +7,7 @@ import { api, Person, News } from "@/lib/api";
 import heroBg from "@/assets/hero-bg.jpg";
 import microstructureImg from "@/assets/microstructure-sem.jpg";
 import labImg from "@/assets/lab-environment.jpg";
+import logoImg from "@/assets/logo.svg";
 
 export default function HomePage() {
   const [teamMembers, setTeamMembers] = useState<Person[]>([]);
@@ -27,18 +28,24 @@ export default function HomePage() {
       .finally(() => setLoading(false));
   }, []);
 
+  const getTeamImage = (name: string) => {
+    const nameLower = name.toLowerCase();
+    if (nameLower.includes('hanna')) return '/images/people/hanna.avif';
+    if (nameLower.includes('amram') || nameLower.includes('azulay')) return '/images/people/amram.avif';
+    if (nameLower.includes('gautam')) return '/images/people/gautam.avif';
+    if (nameLower.includes('saja')) return '/images/people/saja.avif';
+    if (nameLower.includes('omer')) return '/images/people/omer.avif';
+    return '';
+  };
+
   const getNewsImage = (imagePath: string) => {
     if (!imagePath) return heroBg;
-    // Map image path to assets
-    const images: Record<string, string> = {
-      'news/lab-construction.jpg': 'lab-construction.jpg',
-      'news/aluminum-alloys.jpg': 'aluminum-alloys.jpg',
-      'news/new-members.jpg': 'new-members.jpg',
-      'news/isf-grant.jpg': 'isf-grant.jpg',
-      'news/max-planck.jpg': 'max-planck.jpg',
-    };
-    // Return placeholder or mapped image
-    return heroBg;
+    if (imagePath.includes('lab-construction')) return labImg;
+    if (imagePath.includes('aluminum')) return labImg;
+    if (imagePath.includes('new-members')) return labImg;
+    if (imagePath.includes('isf')) return labImg;
+    if (imagePath.includes('max-planck')) return labImg;
+    return labImg;
   };
 
   return (
@@ -55,9 +62,12 @@ export default function HomePage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <span className="text-copper-light text-sm tracking-[0.25em] uppercase font-medium mb-6 block">
+            <span className="text-copper-light text-sm tracking-[0.25em] uppercase font-medium mb-4 block">
               Tel Aviv University
             </span>
+            <div className="inline-block mb-4">
+              <img src={logoImg} alt="DIIL Logo" className="h-20 md:h-24 w-auto" />
+            </div>
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-heading font-extrabold text-primary-foreground leading-tight tracking-tight">
               Defects and Internal
               <br />
@@ -75,14 +85,20 @@ export default function HomePage() {
                 Explore Research <ArrowRight size={16} />
               </Link>
               <Link
+                to="/projects"
+                className="inline-flex items-center gap-2 bg-accent text-accent-foreground px-6 py-3 rounded-md text-sm font-medium hover:bg-accent/90 transition-colors"
+              >
+                Explore Projects <ArrowRight size={16} />
+              </Link>
+              <Link
                 to="/people"
-                className="inline-flex items-center gap-2 border border-primary-foreground/30 text-primary-foreground px-6 py-3 rounded-md text-sm font-medium hover:bg-primary-foreground/10 transition-colors"
+                className="inline-flex items-center gap-2 bg-accent text-accent-foreground px-6 py-3 rounded-md text-sm font-medium hover:bg-accent/90 transition-colors"
               >
                 Meet the Team
               </Link>
               <Link
                 to="/facilities"
-                className="inline-flex items-center gap-2 border border-primary-foreground/30 text-primary-foreground px-6 py-3 rounded-md text-sm font-medium hover:bg-primary-foreground/10 transition-colors"
+                className="inline-flex items-center gap-2 bg-accent text-accent-foreground px-6 py-3 rounded-md text-sm font-medium hover:bg-accent/90 transition-colors"
               >
                 View Facilities
               </Link>
@@ -113,17 +129,6 @@ export default function HomePage() {
                   associated resistivity mechanisms is the key to improving electrical properties while
                   maintaining high-mechanical performance.
                 </p>
-                <div className="pt-4 flex flex-wrap gap-6 text-sm">
-                  <span className="flex items-center gap-2 text-foreground font-semibold">
-                    <span className="w-2.5 h-2.5 rounded-full bg-teal animate-pulse" /> Quantitative SEM Measurements
-                  </span>
-                  <span className="flex items-center gap-2 text-foreground font-semibold">
-                    <span className="w-2.5 h-2.5 rounded-full bg-accent animate-pulse" style={{ animationDelay: '0.5s' }} /> Electron Scattering Mechanisms
-                  </span>
-                  <span className="flex items-center gap-2 text-foreground font-semibold">
-                    <span className="w-2.5 h-2.5 rounded-full bg-copper animate-pulse" style={{ animationDelay: '1s' }} /> Defect-Design Concepts
-                  </span>
-                </div>
               </div>
             </FadeIn>
           </div>
@@ -154,8 +159,12 @@ export default function HomePage() {
               <FadeIn key={member.id} delay={i * 0.08}>
                 <div className="text-center group">
                   <div className="w-24 h-24 rounded-full bg-muted mx-auto mb-3 overflow-hidden ring-2 ring-transparent group-hover:ring-accent/40 transition-all duration-300">
-                    {member.image && (
-                      <img src={member.image} alt={member.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                    {member.image || getTeamImage(member.name) ? (
+                      <img src={getTeamImage(member.name)} alt={member.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-teal text-white font-bold text-2xl">
+                        {member.name.charAt(0)}
+                      </div>
                     )}
                   </div>
                   <p className="text-sm font-semibold text-foreground">{member.name}</p>
@@ -184,7 +193,7 @@ export default function HomePage() {
               <FadeIn key={item.id} delay={i * 0.08}>
                 <div className="group bg-card rounded-lg border border-border overflow-hidden hover:shadow-lg hover:border-teal/40 transition-all duration-300 flex flex-col sm:flex-row">
                   <div className="sm:w-48 md:w-56 shrink-0 overflow-hidden">
-                    <img src={heroBg} alt="" className="w-full h-40 sm:h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    <img src={getNewsImage(item.image || '')} alt="" className="w-full h-40 sm:h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                   </div>
                   <div className="p-5 flex flex-col justify-center">
                     <span className="text-xs font-semibold text-accent tracking-wide mb-1 block">

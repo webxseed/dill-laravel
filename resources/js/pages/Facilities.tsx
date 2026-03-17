@@ -17,16 +17,38 @@ export default function FacilitiesPage() {
   const [categories, setCategories] = useState<FacilityCategory[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const getProductImage = (name: string) => {
+    const nameLower = name.toLowerCase().replace(/\s+/g, '-');
+    const images: Record<string, string> = {
+      'induction-melting-furnace': '/images/facilities/induction-melting-furnace.avif',
+      'magnetron-sputtering-machine': '/images/facilities/magnetron-sputtering.avif',
+      'inert-atmosphere-vacuum-tube-furnaces': '/images/facilities/inert-tube-furnaces.avif',
+      'vacuum-furnace': '/images/facilities/vacuum-furnace.avif',
+      'burnout-furnace': '/images/facilities/burnout-furnace.avif',
+      'cold-rolling': '/images/facilities/cold-rolling.avif',
+      'multi-directional-forging': '/images/facilities/multi-directional-forging.avif',
+      'cutting-wheel-disk': '/images/facilities/cutting-wheel-disk.avif',
+      'diamond-wire-saw': '/images/facilities/diamond-wire-saw.avif',
+      'automatic-polishing-machine': '/images/facilities/automatic-polishing-machine.avif',
+      'vibro-polishing-machine': '/images/facilities/vibro-polishing-machine.avif',
+      'optical-microscope': '/images/facilities/optical-microscope.avif',
+      'benchtop-scanning-electron-microscope-(sem)': '/images/facilities/benchtop-sem.avif',
+      'nano-probing-nano-manipulators-system': '/images/facilities/nano-probing.avif',
+      'keithley-devices': '/images/facilities/keithley-devices.avif',
+      'probing-station': '/images/facilities/probing-station.avif',
+      'nanoindenter': '/images/facilities/nanoindenter.avif',
+    };
+    return images[nameLower] || '';
+  };
+
   useEffect(() => {
     api.get("/products")
       .then((data: Product[]) => {
-        // Group products by category
         const grouped = data.reduce((acc, product) => {
           const category = product.category;
           if (!acc[category]) {
             acc[category] = [];
           }
-          // Parse features from JSON string if needed
           let features: string[] = [];
           if (product.features) {
             try {
@@ -40,12 +62,11 @@ export default function FacilitiesPage() {
           acc[category].push({
             name: product.name,
             features,
-            image: product.image,
+            image: getProductImage(product.name),
           });
           return acc;
         }, {} as Record<string, Facility[]>);
 
-        // Convert to array and sort by category
         const categoryArray: FacilityCategory[] = Object.entries(grouped)
           .map(([title, items]) => ({ title, items }))
           .sort((a, b) => {
@@ -70,9 +91,9 @@ export default function FacilitiesPage() {
       </section>
     );
   }
+
   return (
     <>
-      {/* Header */}
       <section className="pt-32 pb-16 section-padding bg-gold-light/70">
         <div className="container-wide mx-auto text-center">
           <SectionHeader
@@ -83,7 +104,6 @@ export default function FacilitiesPage() {
         </div>
       </section>
 
-      {/* Categories */}
       {categories.map((category, ci) => (
         <section
           key={category.title}

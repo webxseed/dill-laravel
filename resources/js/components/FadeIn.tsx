@@ -33,7 +33,7 @@ export function SectionHeader({
   center?: boolean;
 }) {
   return (
-    <FadeIn className={`mb-12 md:mb-16 ${center ? "text-center" : ""}`}>
+    <FadeIn className={`mb-8 md:mb-10 ${center ? "text-center" : ""}`}>
       {label && (
         <span className="text-accent text-sm font-medium tracking-widest uppercase mb-3 block">
           {label}
