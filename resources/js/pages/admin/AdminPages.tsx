@@ -11,6 +11,7 @@ interface Page {
   meta_title: string;
   meta_description: string;
   is_published: boolean;
+  deletable?: boolean;
 }
 
 export default function AdminPages() {
@@ -55,6 +56,11 @@ export default function AdminPages() {
   };
 
   const handleDelete = async (id: number) => {
+    const page = pages.find(p => p.id === id);
+    if (!page?.deletable) {
+      alert('This page cannot be deleted.');
+      return;
+    }
     if (!confirm('Delete this page?')) return;
     try {
       await api.delete(`/pages/${id}`);
@@ -124,7 +130,8 @@ export default function AdminPages() {
                   </div>
                   <button 
                     onClick={(e) => { e.stopPropagation(); handleDelete(page.id); }}
-                    className="text-xs text-red-500 hover:underline"
+                    className={`text-xs ${page.deletable === false ? 'text-gray-400 cursor-not-allowed' : 'text-red-500 hover:underline'}`}
+                    disabled={page.deletable === false}
                   >
                     Delete
                   </button>
