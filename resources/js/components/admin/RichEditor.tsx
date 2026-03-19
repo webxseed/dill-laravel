@@ -124,8 +124,11 @@ export default function RichEditor({ value, onChange }: RichEditorProps) {
         ref={editorRef}
         contentEditable
         onInput={handleInput}
-        className="w-full px-3 py-2 min-h-[200px] bg-background focus:outline-none prose prose-sm max-w-none"
-        style={{ minHeight: '200px' }}
+        className="w-full px-4 py-3 min-h-[200px] bg-background focus:outline-none prose prose-sm max-w-none"
+        style={{
+          minHeight: '200px',
+        }}
+        suppressContentEditableWarning
       />
     </div>
   );
