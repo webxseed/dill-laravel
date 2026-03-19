@@ -5,7 +5,7 @@ import { api, Project } from "@/lib/api";
 export default function ProjectsPage() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
-  const [pageData, setPageData] = useState<{ meta_title?: string; meta_description?: string }>({});
+  const [pageData, setPageData] = useState<{ meta_title?: string; meta_description?: string; subtitle?: string }>({});
 
   useEffect(() => {
     api.getPage('projects')
@@ -49,7 +49,7 @@ export default function ProjectsPage() {
           <SectionHeader
             label="Projects"
             title="Research Projects"
-            description="Brief descriptions of our research projects. For more information please contact the PI."
+            description={pageData.subtitle || "Brief descriptions of our research projects. For more information please contact the PI."}
           />
         </div>
       </section>

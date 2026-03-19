@@ -43,9 +43,10 @@ export function SectionHeader({
         {title}
       </h2>
       {description && (
-        <p className="mt-4 text-muted-foreground max-w-2xl leading-relaxed text-base md:text-lg mx-auto">
-          {description}
-        </p>
+        <div 
+          className="mt-4 text-muted-foreground max-w-2xl leading-relaxed text-base md:text-lg mx-auto prose prose-sm prose-p:my-0 prose-h1:text-xl prose-h2:text-lg"
+          dangerouslySetInnerHTML={{ __html: description }}
+        />
       )}
     </FadeIn>
   );

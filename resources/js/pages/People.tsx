@@ -6,7 +6,7 @@ import { api, Person } from "@/lib/api";
 export default function PeoplePage() {
   const [people, setPeople] = useState<Person[]>([]);
   const [loading, setLoading] = useState(true);
-  const [pageData, setPageData] = useState<{ meta_title?: string; meta_description?: string }>({});
+  const [pageData, setPageData] = useState<{ meta_title?: string; meta_description?: string; subtitle?: string }>({});
 
   useEffect(() => {
     api.getPage('people')
@@ -59,7 +59,7 @@ export default function PeoplePage() {
           <SectionHeader
             label="Team"
             title="People of DIIL"
-            description="Meet the researchers behind our cutting-edge materials science research."
+            description={pageData.subtitle || "Meet the researchers behind our cutting-edge materials science research."}
           />
         </div>
       </section>

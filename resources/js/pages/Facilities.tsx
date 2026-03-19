@@ -16,7 +16,7 @@ interface FacilityCategory {
 export default function FacilitiesPage() {
   const [categories, setCategories] = useState<FacilityCategory[]>([]);
   const [loading, setLoading] = useState(true);
-  const [pageData, setPageData] = useState<{ meta_title?: string; meta_description?: string }>({});
+  const [pageData, setPageData] = useState<{ meta_title?: string; meta_description?: string; subtitle?: string }>({});
 
   useEffect(() => {
     api.getPage('facilities')
@@ -77,7 +77,7 @@ export default function FacilitiesPage() {
           acc[category].push({
             name: product.name,
             features,
-            image: getProductImage(product.name),
+            image: product.image || getProductImage(product.name),
           });
           return acc;
         }, {} as Record<string, Facility[]>);
@@ -114,7 +114,7 @@ export default function FacilitiesPage() {
           <SectionHeader
             label="Facilities"
             title="Lab Equipment & Instruments"
-            description="The lab is equipped with instruments for proper materials fabrication, sample preparation, and characterization."
+            description={pageData.subtitle || "The lab is equipped with instruments for proper materials fabrication, sample preparation, and characterization."}
           />
         </div>
       </section>

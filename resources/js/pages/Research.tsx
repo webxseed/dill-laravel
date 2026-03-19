@@ -3,7 +3,7 @@ import { FadeIn, SectionHeader } from "@/components/FadeIn";
 import { api, Publication } from "@/lib/api";
 
 export default function ResearchPage() {
-  const [pageData, setPageData] = useState<{ meta_title?: string; meta_description?: string; content?: string; image?: string }>({});
+  const [pageData, setPageData] = useState<{ meta_title?: string; meta_description?: string; content?: string; image?: string; subtitle?: string }>({});
   const [publications, setPublications] = useState<Publication[]>([]);
 
   useEffect(() => {
@@ -34,7 +34,7 @@ export default function ResearchPage() {
           <SectionHeader
             label="Research"
             title="Research Philosophy"
-            description="The research philosophy of DIIL is explained."
+            description={pageData.subtitle || "The research philosophy of DIIL is explained."}
           />
         </div>
       </section>

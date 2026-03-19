@@ -6,6 +6,7 @@ interface Page {
   id: number;
   slug: string;
   title: string;
+  subtitle: string;
   content: string;
   image: string;
   meta_title: string;
@@ -76,6 +77,7 @@ export default function AdminPages() {
       id: 0,
       slug: '',
       title: '',
+      subtitle: '',
       content: '',
       image: '',
       meta_title: '',
@@ -199,8 +201,15 @@ export default function AdminPages() {
                   <div>
                     <label className="block text-sm font-medium mb-1">Content</label>
                     <RichEditor
-                      value={editing.content}
+                      value={editing.content || ""}
                       onChange={(value) => setEditing({ ...editing, content: value })}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Subtitle / Description</label>
+                    <RichEditor
+                      value={editing.subtitle || ""}
+                      onChange={(value) => setEditing({ ...editing, subtitle: value })}
                     />
                   </div>
                   <div>

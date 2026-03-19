@@ -7,7 +7,7 @@ export default function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
   const [settings, setSettings] = useState<any>({});
-  const [pageData, setPageData] = useState<{ meta_title?: string; meta_description?: string }>({});
+  const [pageData, setPageData] = useState<{ meta_title?: string; meta_description?: string; subtitle?: string }>({});
 
   useEffect(() => {
     api.getSettings().then(setSettings).catch(console.error);
@@ -54,7 +54,7 @@ export default function ContactPage() {
           <SectionHeader
             label="Contact"
             title="Get in Touch"
-            description="Interested in collaboration, joining the lab, or learning more about our research? We'd love to hear from you."
+            description={pageData.subtitle || "Interested in collaboration, joining the lab, or learning more about our research? We'd love to hear from you."}
           />
         </div>
       </section>

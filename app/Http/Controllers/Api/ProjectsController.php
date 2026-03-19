@@ -24,6 +24,7 @@ class ProjectsController extends Controller
             'period' => 'nullable|string|max:255',
             'status' => 'string|max:50',
             'sort_order' => 'integer',
+            'image' => 'nullable|string',
         ]);
 
         $project = Project::create($validated);
@@ -45,6 +46,7 @@ class ProjectsController extends Controller
             'period' => 'nullable|string|max:255',
             'status' => 'string|max:50',
             'sort_order' => 'integer',
+            'image' => 'nullable|string',
         ]);
 
         $project->update($validated);
