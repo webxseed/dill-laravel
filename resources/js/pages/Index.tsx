@@ -325,7 +325,7 @@ export default function HomePage() {
                 <div className="text-center group">
                   <div className="w-24 h-24 rounded-full bg-muted mx-auto mb-3 overflow-hidden ring-2 ring-transparent group-hover:ring-accent/40 transition-all duration-300">
                     {member.image || getTeamImage(member.name) ? (
-                      <img src={getTeamImage(member.name)} alt={member.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                      <img src={member.image || getTeamImage(member.name)} alt={member.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center bg-teal text-white font-bold text-2xl">
                         {member.name.charAt(0)}
@@ -346,54 +346,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* News */}
-      <section className="section-padding bg-gold-light/60">
-        <div className="container-wide mx-auto">
-          {isEditing ? (
-            <div className="space-y-4 mb-8 bg-white/50 p-4 rounded-lg max-w-2xl mx-auto">
-              <input
-                type="text"
-                value={editConfig.home_news_label || ''}
-                onChange={(e) => setEditConfig({ ...editConfig, home_news_label: e.target.value })}
-                className="w-full px-3 py-2 rounded-md border border-border bg-background text-center"
-                placeholder="News Label"
-              />
-              <input
-                type="text"
-                value={editConfig.home_news_title || ''}
-                onChange={(e) => setEditConfig({ ...editConfig, home_news_title: e.target.value })}
-                className="w-full px-3 py-2 rounded-md border border-border bg-background text-center text-3xl font-heading font-bold"
-                placeholder="News Title"
-              />
-            </div>
-          ) : (
-            <SectionHeader
-              label={siteConfig.home_news_label || 'Updates'}
-              title={siteConfig.home_news_title || 'News & Announcements'}
-            />
-          )}
-          <div className="max-w-4xl mx-auto grid gap-6">
-            {newsItems.map((item, i) => (
-              <FadeIn key={item.id} delay={i * 0.08}>
-                <div className="group bg-card rounded-lg border border-border overflow-hidden hover:shadow-lg hover:border-teal/40 transition-all duration-300 flex flex-col sm:flex-row">
-                  <div className="sm:w-48 md:w-56 shrink-0 overflow-hidden">
-                    <img src={getNewsImage(item.image || '')} alt="" className="w-full h-40 sm:h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                  </div>
-                  <div className="p-5 flex flex-col justify-center">
-                    <span className="text-xs font-semibold text-accent tracking-wide mb-1 block">
-                      {item.date}
-                    </span>
-                    <h3 className="text-base font-heading font-bold text-foreground mb-1">{item.title}</h3>
-                    <p className="text-sm text-foreground/80 leading-relaxed">
-                      {item.text}
-                    </p>
-                  </div>
-                </div>
-              </FadeIn>
-            ))}
-          </div>
-        </div>
-      </section>
+
 
       {/* CTA */}
       <section className="section-padding bg-primary">

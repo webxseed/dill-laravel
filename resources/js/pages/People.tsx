@@ -74,9 +74,9 @@ export default function PeoplePage() {
               <FadeIn key={person.id} delay={i * 0.08}>
                 <div className="bg-card border border-border rounded-xl overflow-hidden hover:shadow-lg transition-shadow h-full flex flex-col">
                   <div className="aspect-square overflow-hidden bg-muted relative">
-                    {getPersonImage(person.name) ? (
+                    {person.image || getPersonImage(person.name) ? (
                       <img
-                        src={getPersonImage(person.name)}
+                        src={person.image || getPersonImage(person.name)}
                         alt={person.name}
                         className="w-full h-full object-cover"
                       />
