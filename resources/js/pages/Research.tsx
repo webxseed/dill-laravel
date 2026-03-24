@@ -5,10 +5,17 @@ import { api, Publication } from "@/lib/api";
 export default function ResearchPage() {
   const [pageData, setPageData] = useState<{ meta_title?: string; meta_description?: string; content?: string; image?: string; subtitle?: string }>({});
   const [publications, setPublications] = useState<Publication[]>([]);
+  const [siteConfig, setSiteConfig] = useState<Record<string, string>>({});
 
   useEffect(() => {
     api.getPage('research')
       .then(setPageData)
+      .catch(console.error);
+  }, []);
+
+  useEffect(() => {
+    api.getSiteConfig()
+      .then(setSiteConfig)
       .catch(console.error);
   }, []);
 
@@ -63,7 +70,7 @@ export default function ResearchPage() {
       {/* Publications */}
       <section className="section-padding bg-teal-light/25">
         <div className="container-narrow mx-auto">
-          <SectionHeader title="Related Publications" label="Publications" />
+          <SectionHeader title={siteConfig.research_publications_title || "Selected Publications"} label="Publications" />
           <div className="space-y-6">
             {publications.map((pub, i) => (
               <FadeIn key={pub.id || i} delay={i * 0.05}>

@@ -4,9 +4,9 @@ import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { FadeIn, SectionHeader } from "@/components/FadeIn";
 import { api, Person, News } from "@/lib/api";
-import heroBg from "@/assets/hero-bg.jpg";
-import microstructureImg from "@/assets/microstructure-sem.jpg";
-import labImg from "@/assets/lab-environment.jpg";
+import heroBgDefault from "@/assets/hero-bg.jpg";
+import microstructureImgDefault from "@/assets/microstructure-sem.jpg";
+import labImgDefault from "@/assets/lab-environment.jpg";
 import logoImg from "@/assets/logo.svg";
 
 export default function HomePage() {
@@ -62,6 +62,10 @@ export default function HomePage() {
       .catch(console.error)
       .finally(() => setLoading(false));
   }, []);
+
+  const heroBg = siteConfig.home_hero_bg || heroBgDefault;
+  const microstructureImg = siteConfig.home_about_img || microstructureImgDefault;
+  const labImg = siteConfig.home_lab_img || labImgDefault;
 
   const getTeamImage = (name: string) => {
     const nameLower = name.toLowerCase();
